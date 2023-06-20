@@ -1,17 +1,5 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
+import { Link } from "react-router-dom"
+
 export default function Login() {
   return (
     <>
@@ -23,8 +11,13 @@ export default function Login() {
         <body class="h-full">
         ```
       */}
-      <div className="flex min-h-full flex-1 flex-row justify-center px-6 lg:px-8 items-center">
+      <div className="flex min-h-full flex-1 flex-row justify-center items-center h-screen">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <img
+            className="mx-auto h-30 w-auto"
+            src={process.env.PUBLIC_URL + '/images/ipoteka_bank-logo.jpg'}
+            alt="Your Company"
+          />
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 p-4">
             Sign in to your account
           </h2>
@@ -75,17 +68,16 @@ export default function Login() {
               >
                 Sign in
               </button>
+              <div className="text-sm mt-4 text-center">
+                <Link to='/signUp' className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  Or register new user
+                </Link>
+              </div>
             </div>
           </form>
+
         </div>
-        
-        <div className="sm:w-full sm:max-w-sm bg-slate-300 h-screen flex justify-center items-center">
-          <img
-            className="mx-auto h-30 w-auto"
-            src={process.env.PUBLIC_URL + '/images/ipoteka_bank-logo.jpg'}
-            alt="Your Company"
-          />
-        </div>
+
 
       </div>
     </>
