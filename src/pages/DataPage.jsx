@@ -1,8 +1,10 @@
+import axios from "axios";
 import { Fragment } from "react";
+import { useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import DataRender from "../components/DataRender";
 import DataPageOption from "../components/DataPageOption";
+import DataRender from "../components/DataRender";
 
 const user = {
   name: "Tom Cook",
@@ -28,16 +30,22 @@ function classNames(...classes) {
 }
 
 export default function DataPage() {
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    async function loadArticle() {
+      // const response = await axios.get(`http://192.168.219.208:8080/pinfl/`);
+      const response = await axios.get(`http://172.20.10.3:8080/pinfl/`);
+      const newArticle = response.data;
+      if (newArticle) {
+        setData(newArticle);
+      }
+    }
+    loadArticle();
+  }, [data]);
+
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-100">
-        <body class="h-full">
-        ```
-      */}
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
@@ -217,8 +225,8 @@ export default function DataPage() {
         </header>
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            <DataRender />
-            <DataPageOption />
+            {/* <DataRender data={data} /> */}
+            {data && <DataPageOption data={data} />}
           </div>
         </main>
       </div>

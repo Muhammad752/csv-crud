@@ -6,42 +6,19 @@ const TableRow = ({ data }) => {
   return (
     <>
       <tr>
-        <td className="py-3 pl-4">
-          <div className="flex items-center h-5">
-            <input
-              type="checkbox"
-              className="text-blue-600 border-gray-200 rounded focus:ring-blue-500"
-              value={data.id}
-            />
-            <label htmlFor="checkbox" className="sr-only">
-              Checkbox
-            </label>
-          </div>
-        </td>
         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
           {data.id}
         </td>
         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
           {data.branchInfo}
         </td>
-        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-          {data.accountNumber}
-        </td>
-        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-          {data.userInfo}
-        </td>
-        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-          {data.loanAmount}
-        </td>
-        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-          {data.numberInvoice}
-        </td>
+
         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
           {data.pinfl}
         </td>
         <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
           <a className="text-green-500 hover:text-green-700" href="#">
-            Edit
+            Download
           </a>
         </td>
         <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
@@ -56,20 +33,20 @@ const TableRow = ({ data }) => {
       {isCollapsed && (
         <>
           <tr className="text-zinc-400">
-            <td colSpan={2}></td>
+            <td colSpan={1}></td>
             <td>Month</td>
             <td>Invoice</td>
             <td>Organization Name</td>
-            <td></td>
             <td>Organization INN</td>
+            <td></td>
           </tr>
           <tr className="text-zinc-300">
-            <td colSpan={2}></td>
+            <td colSpan={1}></td>
             <td>July</td>
             <td>{data.julyInvoice}</td>
             <td>{data.julyOrgName}</td>
-            <td></td>
             <td>{data.julyOrgInn}</td>
+            <td></td>
           </tr>
         </>
       )}

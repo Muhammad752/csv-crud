@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DataPage from "./pages/DataPage";
 import SignUpPage from "./pages/SignUpPage";
 import NotFound from "./pages/NotFound";
+import CheckIfWorks from "./pages/Check";
 
 function App() {
   return (

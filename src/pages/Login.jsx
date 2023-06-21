@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 export default function Login() {
   return (
@@ -15,7 +15,7 @@ export default function Login() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             className="mx-auto h-30 w-auto"
-            src={process.env.PUBLIC_URL + '/images/ipoteka_bank-logo.jpg'}
+            src={process.env.PUBLIC_URL + "/images/ipoteka_bank-logo.jpg"}
             alt="Your Company"
           />
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 p-4">
@@ -23,7 +23,10 @@ export default function Login() {
           </h2>
           <form className="space-y-6" action="#" method="POST">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
                 Email address
               </label>
               <div className="mt-2">
@@ -40,11 +43,17 @@ export default function Login() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  <a
+                    href="/forgotPassword"
+                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
                     Forgot password?
                   </a>
                 </div>
@@ -69,17 +78,17 @@ export default function Login() {
                 Sign in
               </button>
               <div className="text-sm mt-4 text-center">
-                <Link to='/signUp' className="font-semibold text-indigo-600 hover:text-indigo-500">
+                <Link
+                  to="/signUp"
+                  className="font-semibold text-indigo-600 hover:text-indigo-500"
+                >
                   Or register new user
                 </Link>
               </div>
             </div>
           </form>
-
         </div>
-
-
       </div>
     </>
-  )
+  );
 }

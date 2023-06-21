@@ -1,7 +1,13 @@
 import { TbCsv } from "react-icons/tb";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useReducer } from "react";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import "@inovua/reactdatagrid-community/index.css";
+import { IoMdArrowDropdownCircle } from "react-icons/io";
+import axios from "axios";
+import { BsWindowDock } from "react-icons/bs";
+import LoanPanel from "./LoanPanel/LoanPanel";
+
+let ind = 0;
 
 const TextInput = ({ type, style, value, onChange }) => (
   <div className="relative max-w-xs">
@@ -32,17 +38,6 @@ const TextInput = ({ type, style, value, onChange }) => (
   </div>
 );
 
-const people = [
-  {
-    id: 1,
-    branchInfo: "asdasd",
-  },
-  {
-    id: 2,
-    branchInfo: "asdasd",
-  },
-];
-
 const gridStyle = { minHeight: 400 };
 
 const downloadBlob = (blob, fileName = "grid-data.csv") => {
@@ -65,13 +60,38 @@ const SEPARATOR = ",";
 
 const shouldComponentUpdate = () => true;
 
-const DataPageOption = () => {
+const DataPageOption = ({ data }) => {
+  data.shift();
   const [gridRef, setGridRef] = useState(null);
   const [searchText, setSearchText] = useState("");
-  const [dataSource, setDataSource] = useState(people);
-
+  const [dataSource, setDataSource] = useState(data);
+  const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
+  const [loanInfo, setLoanInfo] = useState({ pinfl: "empty", branchInfo: "" });
   const searchTextRef = useRef(searchText);
   searchTextRef.current = searchText;
+
+  const removeRow = async (pinfl) => {
+    let res = window.confirm(
+      `Do you want to delete record with pinfl ${pinfl}`
+    );
+    if (res) {
+      const response = await axios.delete(
+        `http://172.20.10.3:8080/pinfl/${pinfl}`
+      );
+      console.log(response.status);
+      if ((response.status = 200)) {
+        console.log(pinfl);
+        setDataSource(dataSource.filter((a) => a.pinfl !== pinfl));
+        alert("deleted");
+        console.log(dataSource);
+      }
+    }
+  };
+
+  const loadModal = (data) => {
+    showModalPage();
+    setLoanInfo(data);
+  };
 
   const render = ({ value }) => {
     const lowerSearchText = searchTextRef.current.toLowerCase();
@@ -101,54 +121,75 @@ const DataPageOption = () => {
       header: "№",
       defaultFlex: 1,
       type: "number",
-      render,
+      render: ({ rowIndex }) => rowIndex + 1,
       shouldComponentUpdate,
     },
     {
       name: "branchInfo",
       header: "Branch Info",
-      defaultFlex: 1,
-      render,
-      shouldComponentUpdate,
-    },
-    {
-      name: "accountNumber",
-      header: "ACCOUNT NUMBER",
-      defaultFlex: 1,
-      minWidth: 100,
-      render,
-      shouldComponentUpdate,
-    },
-    {
-      name: "userInfo",
-      header: "USER INFO",
-      minWidth: 80,
-      type: "number",
-      render,
-      shouldComponentUpdate,
-    },
-    {
-      name: "loanAmount",
-      header: "LOAN AMOUNT",
-      minWidth: 80,
-      type: "number",
-      render,
-      shouldComponentUpdate,
-    },
-    {
-      name: "numberInvoice",
-      header: "NUMBER INVOICE",
-      minWidth: 80,
-      type: "number",
+      defaultFlex: 10,
       render,
       shouldComponentUpdate,
     },
     {
       name: "pinfl",
       header: "PINFL",
-      minWidth: 80,
+      minWidth: 10,
       type: "number",
       render,
+      shouldComponentUpdate,
+    },
+    {
+      key: "Read",
+      name: "Read",
+      header: "Read",
+      minWidth: 10,
+      type: "button",
+      render: ({ data }) => (
+        <>
+          <button
+            className="text-green-500 w-full"
+            onClick={() => loadModal(data)}
+          >
+            Read <BsWindowDock className="inline-block" />
+          </button>
+        </>
+      ),
+      shouldComponentUpdate,
+    },
+    {
+      key: "download",
+      name: "download",
+      header: "Download",
+      minWidth: 10,
+      type: "button",
+      render: ({ data }) => {
+        return (
+          <button className="text-green-500 w-full">
+            <a href={"http://172.20.10.3:8080/pinfl/download/" + data.pinfl}>
+              Download
+            </a>
+          </button>
+        );
+      },
+      shouldComponentUpdate,
+    },
+    {
+      key: "delete",
+      name: "delete",
+      header: "Delete",
+      minWidth: 10,
+      type: "button",
+      render: ({ data }) => {
+        return (
+          <button
+            className="w-full text-red-500"
+            onClick={() => removeRow(data.pinfl)}
+          >
+            Delete
+          </button>
+        );
+      },
       shouldComponentUpdate,
     },
   ];
@@ -173,7 +214,7 @@ const DataPageOption = () => {
     const visibleColumns = gridRef.current.visibleColumns;
 
     const lowerSearchText = value && value.toLowerCase();
-    const newData = people.filter((p) => {
+    const newData = data.filter((p) => {
       return visibleColumns.reduce((acc, col) => {
         const v = (p[col.id] + "").toLowerCase(); // get string value
         return acc || v.indexOf(lowerSearchText) != -1; // make the search case insensitive
@@ -183,9 +224,9 @@ const DataPageOption = () => {
     setSearchText(value);
     setDataSource(newData);
   };
-
   return (
     <div>
+      {modalPage && <LoanPanel data={loanInfo} showModal={showModalPage} />}
       <div className="flex justify-between my-5 items-center">
         <TextInput
           type="text"
@@ -206,15 +247,19 @@ const DataPageOption = () => {
           </span>
         </button>
       </div>
-      <ReactDataGrid
-        handle={setGridRef}
-        idProperty="id"
-        style={gridStyle}
-        columns={columns}
-        dataSource={dataSource}
-      />
+      <div className="p-1.5 w-full inline-block align-middle">
+        <div className="overflow-auto border rounded-lg"></div>
+        <ReactDataGrid
+          handle={setGridRef}
+          idProperty="id"
+          style={gridStyle}
+          columns={columns}
+          dataSource={dataSource}
+          className="min-w-full divide-y divide-gray-200"
+        />
+      </div>
     </div>
   );
 };
 
-export default () => <DataPageOption />;
+export default DataPageOption;
