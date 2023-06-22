@@ -1,0 +1,13 @@
+.form {
+  margin-bottom: 20px;
+  label {
+    width: 150px;
+  }
+  input {
+    border: none;
+    border-bottom: 1px solid gray;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}

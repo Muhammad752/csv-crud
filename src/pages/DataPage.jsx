@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DataPageOption from "../components/DataPageOption";
-import DataRender from "../components/DataRender";
+import DataRender from "../components/Draft/DataRender";
 
 const user = {
   name: "Tom Cook",
@@ -15,9 +15,6 @@ const user = {
 const navigation = [
   { name: "Dashboard", href: "#", current: true },
   { name: "Users", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
-  { name: "Reports", href: "#", current: false },
 ];
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -34,16 +31,16 @@ export default function DataPage() {
 
   useEffect(() => {
     async function loadArticle() {
-      // const response = await axios.get(`http://192.168.219.208:8080/pinfl/`);
-      const response = await axios.get(`http://172.20.10.3:8080/pinfl/`);
+      // const response = await axios.get(`/offlineData.json`);
+      const response = await axios.get(process.env.REACT_APP_PROXY + `/pinfl/`);
       const newArticle = response.data;
       if (newArticle) {
         setData(newArticle);
       }
     }
     loadArticle();
-  }, [data]);
-
+  }, []);
+  console.log(data);
   return (
     <>
       <div className="min-h-full">

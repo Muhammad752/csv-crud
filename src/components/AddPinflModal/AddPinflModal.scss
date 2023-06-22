@@ -1,4 +1,4 @@
-.loan {
+.addPinfl {
   &__background {
     display: flex;
     justify-content: center;
@@ -10,12 +10,14 @@
     z-index: 22;
     label {
       display: inline-block;
-      width: 180px;
+      width: 100px;
     }
     input {
       overflow: auto;
       border: none;
-      border-bottom: 1px solid transparent;
+      padding: 0;
+      margin: 5px;
+      border-bottom: 1px solid gray;
       // &:active {
       //   border-color: gray;
       // }

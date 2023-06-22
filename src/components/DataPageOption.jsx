@@ -1,4 +1,3 @@
-import { TbCsv } from "react-icons/tb";
 import React, { useState, useRef, useReducer } from "react";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import "@inovua/reactdatagrid-community/index.css";
@@ -6,6 +5,7 @@ import { IoMdArrowDropdownCircle } from "react-icons/io";
 import axios from "axios";
 import { BsWindowDock } from "react-icons/bs";
 import LoanPanel from "./LoanPanel/LoanPanel";
+import AddPinflModal from "./AddPinflModal/AddPinflModal";
 
 let ind = 0;
 
@@ -61,11 +61,15 @@ const SEPARATOR = ",";
 const shouldComponentUpdate = () => true;
 
 const DataPageOption = ({ data }) => {
+  // if (!data) {
+  //   data = [];
+  // }
   data.shift();
   const [gridRef, setGridRef] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [dataSource, setDataSource] = useState(data);
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
+  const [addPinflModal, showPinflAdd] = useReducer((modal) => !modal, false);
   const [loanInfo, setLoanInfo] = useState({ pinfl: "empty", branchInfo: "" });
   const searchTextRef = useRef(searchText);
   searchTextRef.current = searchText;
@@ -76,7 +80,7 @@ const DataPageOption = ({ data }) => {
     );
     if (res) {
       const response = await axios.delete(
-        `http://172.20.10.3:8080/pinfl/${pinfl}`
+        process.env.REACT_APP_PROXY + `/pinfl/${pinfl}`
       );
       console.log(response.status);
       if ((response.status = 200)) {
@@ -120,6 +124,7 @@ const DataPageOption = ({ data }) => {
       name: "id",
       header: "№",
       defaultFlex: 1,
+      maxWidth: 60,
       type: "number",
       render: ({ rowIndex }) => rowIndex + 1,
       shouldComponentUpdate,
@@ -127,13 +132,13 @@ const DataPageOption = ({ data }) => {
     {
       name: "branchInfo",
       header: "Branch Info",
-      defaultFlex: 10,
       render,
       shouldComponentUpdate,
     },
     {
       name: "pinfl",
       header: "PINFL",
+      defaultFlex: 1,
       minWidth: 10,
       type: "number",
       render,
@@ -166,7 +171,11 @@ const DataPageOption = ({ data }) => {
       render: ({ data }) => {
         return (
           <button className="text-green-500 w-full">
-            <a href={"http://172.20.10.3:8080/pinfl/download/" + data.pinfl}>
+            <a
+              href={
+                process.env.REACT_APP_PROXY + "/pinfl/download/" + data.pinfl
+              }
+            >
               Download
             </a>
           </button>
@@ -196,19 +205,23 @@ const DataPageOption = ({ data }) => {
 
   const [columns] = useState(initialColumns);
 
-  const exportCSV = () => {
-    const columns = gridRef.current.visibleColumns;
-
-    const header = columns.map((c) => c.name).join(SEPARATOR);
-    const rows = gridRef.current.data.map((data) =>
-      columns.map((c) => data[c.id]).join(SEPARATOR)
-    );
-
-    const contents = [header].concat(rows).join("\n");
-    const blob = new Blob([contents], { type: "text/csv;charset=utf-8;" });
-
-    downloadBlob(blob);
+  const addNewPinfl = () => {
+    return "";
   };
+
+  // const exportCSV = () => {
+  //   const columns = gridRef.current.visibleColumns;
+
+  //   const header = columns.map((c) => c.name).join(SEPARATOR);
+  //   const rows = gridRef.current.data.map((data) =>
+  //     columns.map((c) => data[c.id]).join(SEPARATOR)
+  //   );
+
+  //   const contents = [header].concat(rows).join("\n");
+  //   const blob = new Blob([contents], { type: "text/csv;charset=utf-8;" });
+
+  //   downloadBlob(blob);
+  // };
 
   const onSearchChange = ({ target: { value } }) => {
     const visibleColumns = gridRef.current.visibleColumns;
@@ -227,6 +240,7 @@ const DataPageOption = ({ data }) => {
   return (
     <div>
       {modalPage && <LoanPanel data={loanInfo} showModal={showModalPage} />}
+      {addPinflModal && <AddPinflModal showPinflAdd={showPinflAdd} />}
       <div className="flex justify-between my-5 items-center">
         <TextInput
           type="text"
@@ -236,14 +250,13 @@ const DataPageOption = ({ data }) => {
         />{" "}
         <button
           type="button"
-          onClick={exportCSV}
+          onClick={addNewPinfl}
           className="relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1"
         >
           <span className="relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2">
-            <div>
-              <TbCsv />
+            <div onClick={showPinflAdd} className="hidden sm:block">
+              Add PINFL
             </div>
-            <div className="hidden sm:block">Download csv</div>
           </span>
         </button>
       </div>

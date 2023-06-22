@@ -1,15 +1,20 @@
 import "./LoanPanel.scss";
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useRef } from "react";
 import axios from "axios";
+import SubmitLoan from "../SumitLoan/SubmitLoan";
 
 const LoanPanel = ({ data, showModal }) => {
+  const divRef = useRef(null);
+  const [editable, setEditable] = useReducer((a) => !a, false);
   const [loanInfo, setLoanInfo] = useState();
   const [isRefresh, setRefresh] = useReducer((a) => !a, false);
+  const [openCreate, toggleCreate] = useReducer((a) => !a, false);
   useEffect(() => {
     async function loadArticle() {
       // const response = await axios.get(`http://192.168.219.208:8080/pinfl/`);
       const response = await axios.get(
-        "http://172.20.10.3:8080/loans/pinfl/" +
+        process.env.REACT_APP_PROXY +
+          "/loans/pinfl/" +
           data.pinfl +
           "/branchInfo/" +
           data.branchInfo
@@ -32,7 +37,10 @@ const LoanPanel = ({ data, showModal }) => {
           }
         }}
       >
-        <div className="loan__panel h-1/2 w-11/12 md:w-1/2 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between">
+        <div
+          className="loan__panel h-1/2 w-11/12 md:w-1/2 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between"
+          ref={divRef}
+        >
           <div>
             <div className="w-full flex flex-row mb-12 justify-between">
               <h1>Loan Info</h1>
@@ -47,21 +55,78 @@ const LoanPanel = ({ data, showModal }) => {
             <div>
               {loanInfo.map((value) => (
                 <div className="my-5" key={value.id}>
-                  <p>ID: {value.id}</p>
-                  <p>Invoice: {value.invoice}</p>
-                  <p>Organization INN: {value.orgInn}</p>
-                  <p>Organization Name: {value.orgName}</p>
+                  <div>
+                    <label htmlFor="id">ID:</label>
+                    <input
+                      title={value.id}
+                      value={value.id}
+                      type="number"
+                      id="id"
+                      className="ml-3 border-none focus:shadow-none"
+                      placeholder={value.id}
+                      onChange={(e) => (e.target.value = 111)}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="orgName">Month :</label>
+                    <input
+                      title={value.month}
+                      value={value.month}
+                      type="text"
+                      id="orgName"
+                      className="ml-3 border-none focus:shadow-none"
+                      placeholder={value.month}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="invoice">Invoice:</label>
+                    <input
+                      title={value.invoice}
+                      value={value.invoice}
+                      type="number"
+                      id="invoice"
+                      className="ml-3 border-none focus:shadow-none"
+                      placeholder={value.invoice}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="orgInn">Organization INN :</label>
+                    <input
+                      title={value.orgInn}
+                      value={value.orgInn}
+                      type="number"
+                      id="orgInn"
+                      className="ml-3 border-none focus:shadow-none"
+                      placeholder={value.orgInn}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="orgName">Organization Name :</label>
+                    <input
+                      title={value.orgName}
+                      value={value.orgName}
+                      type="text"
+                      id="orgName"
+                      className="ml-3 border-none focus:shadow-none"
+                      placeholder={value.orgName}
+                    />
+                  </div>
 
                   <p className="flex justify-end gap-2">
-                    <button className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
-                      UPDATE
+                    <button
+                      className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                      onClick={setEditable}
+                    >
+                      {editable ? <>POST</> : <>EDIT</>}
                     </button>
 
                     <button
                       className="mt-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
                       onClick={async () => {
                         const res = await axios.delete(
-                          "http://172.20.10.3:8080/loans/" + value.id
+                          process.env.REACT_APP_PROXY + "/loans/" + value.id
                         );
                         setRefresh();
                       }}
@@ -71,55 +136,36 @@ const LoanPanel = ({ data, showModal }) => {
                   </p>
                 </div>
               ))}
-              <div className="form">
-                <label htmlFor="invoice">
-                  Invoice:
-                  <input
-                    className="h-8 border-gray-300"
-                    type="text"
-                    id="invoice"
-                  />
-                </label>
-                <label htmlFor="orgInn">
-                  Organization INN:
-                  <input
-                    className="h-8 border-gray-300"
-                    type="text"
-                    id="orgInn"
-                  />
-                </label>
-                <label htmlFor="invoice">
-                  Invoice:
-                  <input
-                    className="h-8 border-gray-300"
-                    type="text"
-                    id="invoice"
-                  />
-                </label>
-                <label htmlFor="invoice">
-                  Invoice:
-                  <input
-                    className="h-8 border-gray-300"
-                    type="text"
-                    id="invoice"
-                  />
-                </label>
-                <div className="buttons mt-4">
-                  <button className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
-                    Submit
-                  </button>
-                  <button className="mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
-                    Cancel
-                  </button>
-                </div>
-              </div>
+              {openCreate && (
+                <SubmitLoan
+                  toggleCreate={toggleCreate}
+                  data={data}
+                  setRefresh={setRefresh}
+                  month={new Date().toLocaleString("default", {
+                    month: "long",
+                  })}
+                />
+              )}
             </div>
           </div>
-          <footer className="">
+          <footer id="submitLoan" className="">
             <hr />
             <p className="flex justify-end">
-              <button className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
-                CREATE
+              <a href="#submitLoan">
+                <button
+                  className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                  onClick={() => {
+                    toggleCreate();
+                  }}
+                >
+                  CREATE
+                </button>
+              </a>
+              <button
+                className="mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+                onClick={showModal}
+              >
+                Close
               </button>
             </p>
           </footer>

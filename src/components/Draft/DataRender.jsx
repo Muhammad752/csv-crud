@@ -2,7 +2,7 @@ import React from "react";
 import { TbCsv } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import TableRow from "../components/TableRow";
+import TableRow from "./TableRow";
 import { myData } from "./items";
 import "./DataReneder.scss";
 
