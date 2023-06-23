@@ -1,10 +1,10 @@
 import axios from "axios";
-import { Fragment } from "react";
+import { Fragment, useReducer } from "react";
 import { useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DataPageOption from "../components/DataPageOption";
-import DataRender from "../components/Draft/DataRender";
+// import DataRender from "../components/Draft/DataRender";
 
 const user = {
   name: "Tom Cook",
@@ -28,6 +28,7 @@ function classNames(...classes) {
 
 export default function DataPage() {
   const [data, setData] = useState();
+  const [mainListRefresh, refreshMainList] = useReducer((a) => !a, false);
 
   useEffect(() => {
     async function loadArticle() {
@@ -39,7 +40,7 @@ export default function DataPage() {
       }
     }
     loadArticle();
-  }, []);
+  }, [mainListRefresh]);
   console.log(data);
   return (
     <>
@@ -223,7 +224,9 @@ export default function DataPage() {
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             {/* <DataRender data={data} /> */}
-            {data && <DataPageOption data={data} />}
+            {data && (
+              <DataPageOption data={data} refreshMainList={refreshMainList} />
+            )}
           </div>
         </main>
       </div>

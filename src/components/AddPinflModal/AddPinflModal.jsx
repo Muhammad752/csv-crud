@@ -2,7 +2,7 @@ import axios from "axios";
 import "./AddPinflModal.scss";
 import { useState } from "react";
 
-const AddPinflModal = ({ showPinflAdd }) => {
+const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
   const emptyPinflData = {
     pinfl: "",
     branchInfo: "",
@@ -62,9 +62,10 @@ const AddPinflModal = ({ showPinflAdd }) => {
               onClick={async (ev) => {
                 try {
                   const res = await axios.post(
-                    "http://192.168.14.129:8080/pinfl",
+                    process.env.REACT_APP_PROXY + "/pinfl",
                     pinflData
                   );
+                  refreshMainList();
                 } catch (e) {
                   console.log(e.meassage);
                 }

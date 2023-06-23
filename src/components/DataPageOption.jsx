@@ -60,7 +60,7 @@ const SEPARATOR = ",";
 
 const shouldComponentUpdate = () => true;
 
-const DataPageOption = ({ data }) => {
+const DataPageOption = ({ data, refreshMainList }) => {
   // if (!data) {
   //   data = [];
   // }
@@ -82,12 +82,10 @@ const DataPageOption = ({ data }) => {
       const response = await axios.delete(
         process.env.REACT_APP_PROXY + `/pinfl/${pinfl}`
       );
-      console.log(response.status);
       if ((response.status = 200)) {
-        console.log(pinfl);
         setDataSource(dataSource.filter((a) => a.pinfl !== pinfl));
         alert("deleted");
-        console.log(dataSource);
+        refreshMainList();
       }
     }
   };
@@ -240,7 +238,12 @@ const DataPageOption = ({ data }) => {
   return (
     <div>
       {modalPage && <LoanPanel data={loanInfo} showModal={showModalPage} />}
-      {addPinflModal && <AddPinflModal showPinflAdd={showPinflAdd} />}
+      {addPinflModal && (
+        <AddPinflModal
+          showPinflAdd={showPinflAdd}
+          refreshMainList={refreshMainList}
+        />
+      )}
       <div className="flex justify-between my-5 items-center">
         <TextInput
           type="text"

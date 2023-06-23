@@ -1,10 +1,8 @@
 import "./SubmitLoan.scss";
 import { useState } from "react";
 import axios from "axios";
-import { type } from "@testing-library/user-event/dist/type";
 
 const SubmitLoan = ({ toggleCreate, data, setRefresh, month }) => {
-  console.log(month);
   const emptyLoanData = {
     invoice: "",
     orgInn: "",
@@ -76,26 +74,27 @@ const SubmitLoan = ({ toggleCreate, data, setRefresh, month }) => {
         />
       </div>
       <div className="buttons mt-4">
-        <button
-          className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
-          onClick={async () => {
-            console.log(loanData);
-            const res = await axios.post(
-              process.env.REACT_APP_PROXY +
-                "/loans/pinfl/" +
-                data.pinfl +
-                "/branchInfo/" +
-                data.branchInfo,
-              { ...loanData, month: month }
-            );
-            setRefresh();
-            console.log(res.data);
-            setLoanData(emptyLoanData);
-            toggleCreate();
-          }}
-        >
-          Submit
-        </button>
+        <a href="#submitLoan">
+          <button
+            className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+            onClick={async () => {
+              console.log(loanData);
+              const res = await axios.post(
+                process.env.REACT_APP_PROXY +
+                  "/loans/pinfl/" +
+                  data.pinfl +
+                  "/branchInfo/" +
+                  data.branchInfo,
+                { ...loanData, month: month }
+              );
+              if (res) setRefresh();
+              setLoanData(emptyLoanData);
+              toggleCreate();
+            }}
+          >
+            Submit
+          </button>
+        </a>
         <button
           className="mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
           onClick={() => {
