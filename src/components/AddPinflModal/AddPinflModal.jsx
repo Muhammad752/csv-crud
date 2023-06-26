@@ -12,7 +12,7 @@ const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
     <div
       className="addPinfl__background flex items-center"
       onClick={(ev) => {
-        if (ev.target.classList[0] == "addPinfl__background") {
+        if (ev.target.classList[0] === "addPinfl__background") {
           showPinflAdd();
         }
       }}

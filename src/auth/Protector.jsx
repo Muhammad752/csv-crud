@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
+import useUser from "./useUser";
 
 const Protector = ({ children }) => {
-  const user = true;
+  const user = useUser;
   if (!user) {
     return <Navigate to="/login" />;
   }
