@@ -54,7 +54,12 @@ const LoanPanel = ({ data, showModal }) => {
             </div>
             <div>
               {loanInfo.map((value) => (
-                <Loan data={data} value={value} setRefresh={setRefresh} />
+                <Loan
+                  key={value.id}
+                  data={data}
+                  value={value}
+                  setRefresh={setRefresh}
+                />
               ))}
               {openCreate && (
                 <SubmitLoan

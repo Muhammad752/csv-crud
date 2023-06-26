@@ -1,13 +1,10 @@
 import React, { useState, useRef, useReducer } from "react";
 import ReactDataGrid from "@inovua/reactdatagrid-community";
 import "@inovua/reactdatagrid-community/index.css";
-import { IoMdArrowDropdownCircle } from "react-icons/io";
 import axios from "axios";
 import { BsWindowDock } from "react-icons/bs";
 import LoanPanel from "./LoanPanel/LoanPanel";
 import AddPinflModal from "./AddPinflModal/AddPinflModal";
-
-let ind = 0;
 
 const TextInput = ({ type, style, value, onChange }) => (
   <div className="relative max-w-xs">
@@ -228,7 +225,7 @@ const DataPageOption = ({ data, refreshMainList }) => {
     const newData = data.filter((p) => {
       return visibleColumns.reduce((acc, col) => {
         const v = (p[col.id] + "").toLowerCase(); // get string value
-        return acc || v.indexOf(lowerSearchText) != -1; // make the search case insensitive
+        return acc || v.indexOf(lowerSearchText) !== -1; // make the search case insensitive
       }, false);
     });
 
