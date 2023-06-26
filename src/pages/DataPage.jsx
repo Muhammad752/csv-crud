@@ -19,7 +19,7 @@ const navigation = [
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "/login" },
+  { name: "Sign out", href: "/" },
 ];
 
 function classNames(...classes) {
@@ -32,8 +32,8 @@ export default function DataPage() {
 
   useEffect(() => {
     async function loadArticle() {
-      // const response = await axios.get(`/offlineData.json`);
-      const response = await axios.get(process.env.REACT_APP_PROXY + `/pinfl/`);
+      const response = await axios.get(`/offlineData.json`);
+      // const response = await axios.get(process.env.REACT_APP_PROXY + `/pinfl/`);
       const newArticle = response.data;
       if (newArticle) {
         setData(newArticle);
@@ -41,7 +41,6 @@ export default function DataPage() {
     }
     loadArticle();
   }, [mainListRefresh]);
-  console.log(data);
   return (
     <>
       <div className="min-h-full">
@@ -223,9 +222,11 @@ export default function DataPage() {
         </header>
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            {/* <DataRender data={data} /> */}
             {data && (
-              <DataPageOption data={data} refreshMainList={refreshMainList} />
+              <>
+                <DataPageOption data={data} refreshMainList={refreshMainList} />
+                {/* <DataRender data={data} /> */}
+              </>
             )}
           </div>
         </main>

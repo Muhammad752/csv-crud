@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ user }) {
+  console.log(user);
+  if (user) return <Navigate to="/dataPage" replace />;
   return (
     <>
       {/*

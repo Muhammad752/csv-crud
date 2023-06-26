@@ -12,16 +12,21 @@ const LoanPanel = ({ data, showModal }) => {
   useEffect(() => {
     async function loadArticle() {
       // const response = await axios.get(`http://192.168.219.208:8080/pinfl/`);
-      const response = await axios.get(
-        process.env.REACT_APP_PROXY +
-          "/loans/pinfl/" +
-          data.pinfl +
-          "/branchInfo/" +
-          data.branchInfo
-      );
-      const newData = response.data;
-      if (newData) {
-        setLoanInfo(newData);
+      try {
+        const response = await axios.get(
+          process.env.REACT_APP_PROXY +
+            "/loans/pinfl/" +
+            data.pinfl +
+            "/branchInfo/" +
+            data.branchInfo
+        );
+        const newData = response.data;
+        if (newData) {
+          setLoanInfo(newData);
+        }
+      } catch (e) {
+        console.log(e.message);
+        alert(e.message);
       }
     }
     loadArticle();

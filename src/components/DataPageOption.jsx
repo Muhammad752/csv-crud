@@ -265,7 +265,7 @@ const DataPageOption = ({ data, refreshMainList }) => {
         <ReactDataGrid
           handle={setGridRef}
           idProperty="id"
-          style={gridStyle}
+          style={(gridStyle, { height: "70vh" })}
           columns={columns}
           dataSource={dataSource}
           className="min-w-full divide-y divide-gray-200"
