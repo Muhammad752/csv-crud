@@ -204,19 +204,19 @@ const DataPageOption = ({ data, refreshMainList }) => {
     return "";
   };
 
-  // const exportCSV = () => {
-  //   const columns = gridRef.current.visibleColumns;
+  const exportCSV = () => {
+    const columns = gridRef.current.visibleColumns;
 
-  //   const header = columns.map((c) => c.name).join(SEPARATOR);
-  //   const rows = gridRef.current.data.map((data) =>
-  //     columns.map((c) => data[c.id]).join(SEPARATOR)
-  //   );
+    const header = columns.map((c) => c.name).join(SEPARATOR);
+    const rows = gridRef.current.data.map((data) =>
+      columns.map((c) => data[c.id]).join(SEPARATOR)
+    );
 
-  //   const contents = [header].concat(rows).join("\n");
-  //   const blob = new Blob([contents], { type: "text/csv;charset=utf-8;" });
+    const contents = [header].concat(rows).join("\n");
+    const blob = new Blob([contents], { type: "text/csv;charset=utf-8;" });
 
-  //   downloadBlob(blob);
-  // };
+    downloadBlob(blob);
+  };
 
   const onSearchChange = ({ target: { value } }) => {
     const visibleColumns = gridRef.current.visibleColumns;

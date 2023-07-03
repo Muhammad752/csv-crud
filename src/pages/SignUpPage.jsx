@@ -15,22 +15,10 @@ export default function SignUpPage() {
     confirmPassValue: "",
   };
   const [token, setToken] = useToken();
+  const [isLoading, setLoading] = useState(false);
   const [regUser, setRegUser] = useState(emptyUser);
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
 
   const navigate = useNavigate("");
-
-  const signUpClick = async () => {
-    const response = await axios.post("/api/signup", {
-      email: emailValue,
-      password: passwordValue,
-    });
-    const { token } = response.data;
-    setToken(token);
-    navigate("/");
-  };
 
   return (
     <>
@@ -44,7 +32,7 @@ export default function SignUpPage() {
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 p-4 pt-0">
             Register new account
           </h2>
-          <form className="space-y-4" action="#" method="POST">
+          <div className="space-y-4" action="#" method="POST">
             <div>
               <label
                 htmlFor="email"
@@ -69,7 +57,7 @@ export default function SignUpPage() {
             </div>
 
             <div className="flex justify-between">
-              <div>
+              <div style={{ width: "48%" }}>
                 <label
                   htmlFor="fname"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -83,16 +71,16 @@ export default function SignUpPage() {
                     type="fname"
                     value={regUser.fname}
                     onChange={(event) =>
-                      setRegUser({ ...regUser, fname: event.target.value })
+                      setRegUser({ ...regUser, fnameValue: event.target.value })
                     }
                     autoComplete="fname"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none"
                   />
                 </div>
               </div>
 
-              <div>
+              <div style={{ width: "48%" }}>
                 <label
                   htmlFor="lname"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -110,7 +98,7 @@ export default function SignUpPage() {
                     }
                     autoComplete="lname"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none"
                   />
                 </div>
               </div>
@@ -129,13 +117,16 @@ export default function SignUpPage() {
                 <input
                   id="telNum"
                   name="telNum"
-                  type="telNum"
+                  type="tel"
                   value={regUser.telNum}
-                  onChange={(event) =>
-                    setRegUser({ ...regUser, telNum: event.target.value })
-                  }
+                  onChange={(event) => {
+                    let tel = event.target.value;
+                    tel = tel.startsWith("+") ? tel.substring(1) : tel;
+                    setRegUser({ ...regUser, telNum: tel.trim() });
+                  }}
                   autoComplete="new-telNum"
                   required
+                  placeholder="998 xx xxx xx xx"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -168,16 +159,16 @@ export default function SignUpPage() {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  htmlFor="password"
+                  htmlFor="confirmPassword"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Confirm your password
+                  Confirm your confirmPassword
                 </label>
               </div>
               <div className="mt-2">
                 <input
-                  id="password"
-                  name="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
                   type="password"
                   value={regUser.confirmPassValue}
                   onChange={(event) =>
@@ -197,12 +188,50 @@ export default function SignUpPage() {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6 disabled:bg-slate-300"
-                disabled={passwordValue !== confirmPasswordValue}
-                onClick={() => {
-                  console.log(regUser);
+                onClick={async () => {
+                  setLoading(true);
+                  const res = await axios.post(
+                    process.env.REACT_APP_PROXY2 +
+                      "/api/auth/register" +
+                      "?email=" +
+                      regUser.emailValue +
+                      "&password=" +
+                      regUser.passValue +
+                      "&firstName=" +
+                      regUser.fnameValue +
+                      "&lastName=" +
+                      regUser.lnameValue +
+                      "&username=" +
+                      regUser.telNum,
+                    {}
+                    // {
+                    //   params: {
+                    //     email: regUser.emailValue,
+                    //     password: regUser.passValue,
+                    //     fname: regUser.lnameValue,
+                    //     lastName: regUser.lnameValue,
+                    //     username: regUser.telNum,
+                    //   },
+                    // }
+                  );
+                  console.log(res);
+                  if (res) {
+                    setLoading(false);
+                  }
+                  if (res.status === 200) {
+                    alert("Please verify your number at telegram bot");
+                  }
                 }}
               >
                 Sign up
+                {isLoading && (
+                  <>
+                    <div className="fixed top-0 right-0 h-screen w-screen z-50 flex justify-center items-center bg-black bg-opacity-40 flex-col">
+                      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+                      <p className="mt-5 text-white text-base">LOADING . . .</p>
+                    </div>
+                  </>
+                )}
               </button>
               <div className="text-sm mt-4 text-center">
                 <Link
@@ -213,7 +242,7 @@ export default function SignUpPage() {
                 </Link>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </>

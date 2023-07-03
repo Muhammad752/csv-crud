@@ -1,18 +1,16 @@
 import { Link, Navigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 
 export default function Login({ user }) {
-  console.log(user);
+  const emptyLogin = {
+    telNum: "",
+    passValue: "",
+  };
+  const [loginData, setLoginData] = useState(emptyLogin);
   if (user) return <Navigate to="/dataPage" replace />;
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div className="flex min-h-full flex-1 flex-row justify-center items-center h-screen">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -23,20 +21,27 @@ export default function Login({ user }) {
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 p-4">
             Sign in to your account
           </h2>
-          <form className="space-y-6" action="#" method="POST">
+          <div className="space-y-6" action="#" method="POST">
             <div>
               <label
-                htmlFor="email"
+                htmlFor="telNum"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Email address
+                Phone number
               </label>
               <div className="mt-2">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="telNum"
+                  name="telNum"
+                  type="tel"
+                  value={loginData.telNum}
+                  onChange={(event) => {
+                    let tel = event.target.value;
+                    tel = tel.startsWith("+") ? tel.substring(1) : tel;
+                    setLoginData({ ...loginData, telNum: tel.trim() });
+                  }}
+                  placeholder="998 xx xxx xx xx"
+                  autoComplete="new-telNum"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -65,6 +70,10 @@ export default function Login({ user }) {
                   id="password"
                   name="password"
                   type="password"
+                  value={loginData.passValue}
+                  onChange={(e) => {
+                    setLoginData({ ...loginData, passValue: e.target.value });
+                  }}
                   autoComplete="current-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -76,6 +85,18 @@ export default function Login({ user }) {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                onClick={async (e) => {
+                  const res = await axios.post(
+                    "http://192.168.51.208:8081/api/auth/access/token" +
+                      "?phoneNumber=" +
+                      loginData.telNum +
+                      "&password=" +
+                      loginData.passValue
+                  );
+                  const { accessToken } = res.data;
+                  localStorage.setItem("token", accessToken);
+                  console.log(loginData);
+                }}
               >
                 Sign in
               </button>
@@ -88,7 +109,7 @@ export default function Login({ user }) {
                 </Link>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </>

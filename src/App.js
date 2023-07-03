@@ -15,8 +15,8 @@ function App() {
   Changing for checking
   
   --------------------*/
-
-  const user = true;
+  let user = useUser();
+  // user = true;
   return (
     <BrowserRouter>
       <Routes>
