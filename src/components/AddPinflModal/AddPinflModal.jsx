@@ -1,8 +1,10 @@
 import axios from "axios";
 import "./AddPinflModal.scss";
 import { useState } from "react";
+import useToken from "../../auth/useToken";
 
 const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
+  const [token] = useToken();
   const emptyPinflData = {
     pinfl: "",
     branchInfo: "",
@@ -63,7 +65,10 @@ const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
                 try {
                   const res = await axios.post(
                     process.env.REACT_APP_PROXY + "/pinfl",
-                    pinflData
+                    pinflData,
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
                   );
                   refreshMainList();
                 } catch (e) {

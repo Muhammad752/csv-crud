@@ -1,6 +1,7 @@
 import "./LoanPanel.scss";
 import { useState, useEffect, useReducer, useRef } from "react";
 import axios from "axios";
+import useToken from "../../auth/useToken";
 import SubmitLoan from "../SumitLoan/SubmitLoan";
 import Loan from "../Loan/Loan";
 
@@ -9,16 +10,21 @@ const LoanPanel = ({ data, showModal }) => {
   const [loanInfo, setLoanInfo] = useState();
   const [isRefresh, setRefresh] = useReducer((a) => !a, false);
   const [openCreate, toggleCreate] = useReducer((a) => !a, false);
+  const [token] = useToken();
   useEffect(() => {
     async function loadArticle() {
       // const response = await axios.get(`http://192.168.219.208:8080/pinfl/`);
+
       try {
         const response = await axios.get(
           process.env.REACT_APP_PROXY +
             "/loans/pinfl/" +
             data.pinfl +
             "/branchInfo/" +
-            data.branchInfo
+            data.branchInfo,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         const newData = response.data;
         if (newData) {
@@ -43,7 +49,7 @@ const LoanPanel = ({ data, showModal }) => {
         }}
       >
         <div
-          className="loan__panel h-1/2 w-11/12 md:w-1/2 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between"
+          className="loan__panel h-1/2 w-11/12 md:w-1/2 p-6 bg-white rounded-md overflow-auto flex flex-col justify-between"
           ref={divRef}
         >
           <div>

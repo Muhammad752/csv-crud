@@ -2,11 +2,12 @@ import { useState } from "react";
 
 const useToken = () => {
   const [token, setTokenInternal] = useState(() => {
-    return localStorage.getItem("token");
+    return localStorage.getItem("ipoteka_token");
   });
 
   const setToken = (newToken) => {
-    localStorage.setItem("token", newToken);
+    console.log(newToken);
+    localStorage.setItem("ipoteka_token", newToken);
     setTokenInternal(newToken);
   };
 

@@ -1,8 +1,13 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Loading from "../components/Loading";
+import useToken from "../auth/useToken";
 import axios from "axios";
 
 export default function Login({ user }) {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useToken("");
   const emptyLogin = {
     telNum: "",
     passValue: "",
@@ -11,6 +16,7 @@ export default function Login({ user }) {
   if (user) return <Navigate to="/dataPage" replace />;
   return (
     <>
+      {loading && <Loading />}
       <div className="flex min-h-full flex-1 flex-row justify-center items-center h-screen">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -36,9 +42,7 @@ export default function Login({ user }) {
                   type="tel"
                   value={loginData.telNum}
                   onChange={(event) => {
-                    let tel = event.target.value;
-                    tel = tel.startsWith("+") ? tel.substring(1) : tel;
-                    setLoginData({ ...loginData, telNum: tel.trim() });
+                    setLoginData({ ...loginData, telNum: event.target.value });
                   }}
                   placeholder="998 xx xxx xx xx"
                   autoComplete="new-telNum"
@@ -86,16 +90,25 @@ export default function Login({ user }) {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 onClick={async (e) => {
-                  const res = await axios.post(
-                    "http://192.168.51.208:8081/api/auth/access/token" +
-                      "?phoneNumber=" +
-                      loginData.telNum +
-                      "&password=" +
-                      loginData.passValue
-                  );
-                  const { accessToken } = res.data;
-                  localStorage.setItem("token", accessToken);
-                  console.log(loginData);
+                  try {
+                    setLoading(true);
+                    const res = await axios.post(
+                      process.env.REACT_APP_PROXY2 + "/api/auth/access/token",
+                      {
+                        phoneNumber: loginData.telNum,
+                        password: loginData.passValue,
+                      }
+                    );
+                    const { access_token } = res.data;
+                    console.log(access_token);
+                    setToken(access_token);
+                    console.log(loginData);
+                    window.location.reload();
+                  } catch (e) {
+                    setLoading(false);
+                    alert(e.message);
+                  }
+                  setLoading(false);
                 }}
               >
                 Sign in

@@ -4,6 +4,7 @@ import "@inovua/reactdatagrid-community/index.css";
 import axios from "axios";
 import { BsWindowDock } from "react-icons/bs";
 import LoanPanel from "./LoanPanel/LoanPanel";
+import useToken from "../auth/useToken";
 import AddPinflModal from "./AddPinflModal/AddPinflModal";
 
 const TextInput = ({ type, style, value, onChange }) => (
@@ -68,6 +69,7 @@ const DataPageOption = ({ data, refreshMainList }) => {
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
   const [addPinflModal, showPinflAdd] = useReducer((modal) => !modal, false);
   const [loanInfo, setLoanInfo] = useState({ pinfl: "empty", branchInfo: "" });
+  const [token] = useToken();
   const searchTextRef = useRef(searchText);
   searchTextRef.current = searchText;
 
@@ -77,7 +79,10 @@ const DataPageOption = ({ data, refreshMainList }) => {
     );
     if (res) {
       const response = await axios.delete(
-        process.env.REACT_APP_PROXY + `/pinfl/${pinfl}`
+        process.env.REACT_APP_PROXY + `/pinfl/${pinfl}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
       if ((response.status = 200)) {
         setDataSource(dataSource.filter((a) => a.pinfl !== pinfl));
@@ -165,7 +170,17 @@ const DataPageOption = ({ data, refreshMainList }) => {
       type: "button",
       render: ({ data }) => {
         return (
-          <button className="text-green-500 w-full">
+          <button
+            className="text-green-500 w-full"
+            onClick={async () => {
+              await axios.get(
+                "http://192.168.12.106:9091/pinfl/download/" + data.pinfl,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
+            }}
+          >
             <a
               href={
                 process.env.REACT_APP_PROXY + "/pinfl/download/" + data.pinfl

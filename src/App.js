@@ -16,12 +16,11 @@ function App() {
   
   --------------------*/
   let user = useUser();
-  // user = true;
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="sign" element={<SingUpAlterNate />} />
-        {/* <Route index path="/" element={<CheckIfWorks />} /> */}
         <Route index element={<Login user={user} />} />
         <Route element={<Protector user={user} />}>
           <Route path="/dataPage" element={<DataPage />} />

@@ -1,7 +1,9 @@
 import { useReducer, useState } from "react";
+import useToken from "../../auth/useToken";
 import axios from "axios";
 
 const Loan = ({ data, value, setRefresh }) => {
+  const [token] = useToken();
   const [editable, setEditable] = useReducer((a) => !a, false);
   const emptySingleLoan = {
     id: value.id,
@@ -100,7 +102,10 @@ const Loan = ({ data, value, setRefresh }) => {
                     data.pinfl +
                     "/branchInfo/" +
                     data.branchInfo,
-                  { ...singleLoan }
+                  { ...singleLoan },
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                  }
                 );
                 console.log(resp);
               }}
@@ -130,7 +135,10 @@ const Loan = ({ data, value, setRefresh }) => {
           className="mt-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
           onClick={async () => {
             const res = await axios.delete(
-              process.env.REACT_APP_PROXY + "/loans/" + value.id
+              process.env.REACT_APP_PROXY + "/loans/" + value.id,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
             );
             if (res) setRefresh();
           }}

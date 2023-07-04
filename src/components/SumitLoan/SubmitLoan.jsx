@@ -1,8 +1,10 @@
 import "./SubmitLoan.scss";
 import { useState } from "react";
+import useToken from "../../auth/useToken";
 import axios from "axios";
 
 const SubmitLoan = ({ toggleCreate, data, setRefresh, month }) => {
+  const [token] = useToken();
   const emptyLoanData = {
     invoice: "",
     orgInn: "",
@@ -85,7 +87,10 @@ const SubmitLoan = ({ toggleCreate, data, setRefresh, month }) => {
                   data.pinfl +
                   "/branchInfo/" +
                   data.branchInfo,
-                { ...loanData, month: month }
+                { ...loanData, month: month },
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
               );
               if (res) setRefresh();
               setLoanData(emptyLoanData);

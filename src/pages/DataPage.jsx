@@ -3,15 +3,14 @@ import { Fragment, useReducer } from "react";
 import { useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import useUser from "../auth/useUser";
+import useToken from "../auth/useToken";
 import DataPageOption from "../components/DataPageOption";
 // import DataRender from "../components/Draft/DataRender";
 
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp_3YqeetRoOdPsnESJq-J6MuPOrYpmZqxig&usqp=CAU",
-};
+const imageUrl =
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp_3YqeetRoOdPsnESJq-J6MuPOrYpmZqxig&usqp=CAU";
+
 const navigation = [
   { name: "Dashboard", href: "#", current: true },
   { name: "Users", href: "#", current: false },
@@ -19,7 +18,13 @@ const navigation = [
 const userNavigation = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "/" },
+  {
+    name: "Sign out",
+    href: "/",
+    onclick: () => {
+      localStorage.removeItem("ipoteka_token");
+    },
+  },
 ];
 
 function classNames(...classes) {
@@ -27,13 +32,23 @@ function classNames(...classes) {
 }
 
 export default function DataPage() {
+  const user = useUser();
+  const [token] = useToken();
+  console.log(user);
+  console.log("My user");
+  console.log(user);
   const [data, setData] = useState();
   const [mainListRefresh, refreshMainList] = useReducer((a) => !a, false);
 
   useEffect(() => {
     async function loadArticle() {
-      const response = await axios.get(`/offlineData.json`);
-      // const response = await axios.get(process.env.REACT_APP_PROXY + `/pinfl/`);
+      // const response = await axios.get(`/offlineData.json`);
+      const response = await axios.get(
+        process.env.REACT_APP_PROXY + `/pinfl/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const newArticle = response.data;
       if (newArticle) {
         setData(newArticle);
@@ -96,7 +111,7 @@ export default function DataPage() {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.imageUrl}
+                              src={user.imageUrl ? user.imageUrl : imageUrl}
                               alt=""
                             />
                           </Menu.Button>
@@ -120,6 +135,7 @@ export default function DataPage() {
                                       active ? "bg-gray-100" : "",
                                       "block px-4 py-2 text-sm text-gray-700"
                                     )}
+                                    onClick={item.onclick}
                                   >
                                     {item.name}
                                   </a>
@@ -175,7 +191,7 @@ export default function DataPage() {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
+                        src={user.imageUrl ? user.imageUrl : imageUrl}
                         alt=""
                       />
                     </div>
@@ -201,6 +217,7 @@ export default function DataPage() {
                         key={item.name}
                         as="a"
                         href={item.href}
+                        onClick={item.onclick}
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                       >
                         {item.name}
