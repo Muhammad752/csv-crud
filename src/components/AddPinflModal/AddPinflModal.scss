@@ -1,0 +1,29 @@
+.addPinfl {
+  &__background {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    width: cover;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.452);
+    z-index: 22;
+    label {
+      display: inline-block;
+      width: 100px;
+    }
+    input {
+      overflow: auto;
+      border: none;
+      padding: 0;
+      margin: 5px;
+      border-bottom: 1px solid gray;
+      // &:active {
+      //   border-color: gray;
+      // }
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+}

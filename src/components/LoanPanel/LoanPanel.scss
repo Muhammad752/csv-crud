@@ -1,0 +1,30 @@
+.loan {
+  &__background {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    width: cover;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.452);
+    z-index: 22;
+    label {
+      display: inline-block;
+      width: 180px;
+    }
+    input {
+      overflow: auto;
+      border: none;
+      border-bottom: 1px solid transparent;
+      // &:active {
+      //   border-color: gray;
+      // }
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+  &__panel {
+    padding: 30px;
+  }
+}
