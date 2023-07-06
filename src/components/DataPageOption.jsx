@@ -6,6 +6,7 @@ import { BsWindowDock } from "react-icons/bs";
 import LoanPanel from "./LoanPanel/LoanPanel";
 import useToken from "../auth/useToken";
 import AddPinflModal from "./AddPinflModal/AddPinflModal";
+import Loading from "./Loading";
 
 const TextInput = ({ type, style, value, onChange }) => (
   <div className="relative max-w-xs">
@@ -59,6 +60,8 @@ const SEPARATOR = ",";
 const shouldComponentUpdate = () => true;
 
 const DataPageOption = ({ data, refreshMainList }) => {
+  const [isLoading, setLoading] = useState(false);
+  console.log("render");
   // if (!data) {
   //   data = [];
   // }
@@ -93,8 +96,11 @@ const DataPageOption = ({ data, refreshMainList }) => {
   };
 
   const loadModal = (data) => {
+    console.log(isLoading);
+    setLoading(true);
     showModalPage();
     setLoanInfo(data);
+    setLoading(false);
   };
 
   const render = ({ value }) => {
@@ -173,21 +179,39 @@ const DataPageOption = ({ data, refreshMainList }) => {
           <button
             className="text-green-500 w-full"
             onClick={async () => {
-              await axios.get(
-                "http://192.168.12.106:9091/pinfl/download/" + data.pinfl,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-              );
+              setLoading(true);
+              try {
+                const response = await axios.get(
+                  process.env.REACT_APP_PROXY + "/pinfl/download/" + data.pinfl,
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                    responseType: "blob",
+                  }
+                );
+                const blob = new Blob([response.data]);
+
+                // Create a temporary anchor element
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = data.pinfl + ".csv";
+
+                // Programmatically trigger the download
+                link.click();
+
+                // Clean up the temporary anchor element
+                URL.revokeObjectURL(link.href);
+                link.remove();
+
+                console.log("File downloaded successfully!");
+              } catch (error) {
+                // Handle error
+                console.error("Error downloading file:", error);
+                setLoading(false);
+              }
+              setLoading(false);
             }}
           >
-            <a
-              href={
-                process.env.REACT_APP_PROXY + "/pinfl/download/" + data.pinfl
-              }
-            >
-              Download
-            </a>
+            Download
           </button>
         );
       },
@@ -249,6 +273,7 @@ const DataPageOption = ({ data, refreshMainList }) => {
   };
   return (
     <div>
+      {isLoading && <Loading />}
       {modalPage && <LoanPanel data={loanInfo} showModal={showModalPage} />}
       {addPinflModal && (
         <AddPinflModal

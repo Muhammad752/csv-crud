@@ -1,5 +1,6 @@
 import { useReducer, useState } from "react";
 import useToken from "../../auth/useToken";
+import "./Loan.scss";
 import axios from "axios";
 
 const Loan = ({ data, value, setRefresh }) => {
@@ -14,7 +15,7 @@ const Loan = ({ data, value, setRefresh }) => {
   };
   const [singleLoan, setSinglLoan] = useState(emptySingleLoan);
   return (
-    <div className="my-5" key={value.id}>
+    <div className="my-5 single__loan" key={value.id}>
       <div>
         <label htmlFor="id">ID:</label>
         <input

@@ -100,6 +100,7 @@ export default function Login({ user }) {
                       }
                     );
                     const { access_token } = res.data;
+                    console.log("access token is");
                     console.log(access_token);
                     setToken(access_token);
                     console.log(loginData);

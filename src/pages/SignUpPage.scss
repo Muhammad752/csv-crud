@@ -8,3 +8,7 @@
   border-radius: 6%;
   color: white;
 }
+
+input.invalid {
+  box-shadow: 0 0 4px red;
+}
