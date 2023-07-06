@@ -21,7 +21,7 @@ export default function SignUpPage() {
     fnameValue: "",
     lnameValue: "",
     phoneNumber: "",
-    passValue: [""],
+    passValue: [],
     confirmPassValue: "",
   };
   const [token, setToken] = useToken();
@@ -59,12 +59,21 @@ export default function SignUpPage() {
                   value={regUser.emailValue}
                   onChange={(event) => {
                     setRegUser({ ...regUser, emailValue: event.target.value });
+                    if (!event.target.value.includes("@")) {
+                      setErrMessage({
+                        ...errMessage,
+                        emailValue:
+                          "Please write your email in correct format. (include @)",
+                      });
+                    }
                   }}
                   autoComplete="email"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                <p className="text-red-500 text-sm">{errMessage.emailValue}</p>
+                <p className="text-red-500 text-sm mt-2">
+                  {errMessage.emailValue}
+                </p>
               </div>
             </div>
 
@@ -94,6 +103,9 @@ export default function SignUpPage() {
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none"
                   />
+                  <p className="text-red-500 text-sm mt-2">
+                    {errMessage.fnameValue}
+                  </p>
                 </div>
               </div>
 
@@ -119,6 +131,9 @@ export default function SignUpPage() {
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none"
                   />
+                  <p className="text-red-500 text-sm mt-2">
+                    {errMessage.lnameValue}
+                  </p>
                 </div>
               </div>
             </div>
@@ -148,7 +163,34 @@ export default function SignUpPage() {
                   pattern="^\+998\d{9}$"
                   placeholder="+998 xx xxx xx xx"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onKeyUp={(event) => {
+                    if (
+                      event.target.value.match(`^\\+998\\d{9}$`) &&
+                      event.target.classList.contains("invalid")
+                    ) {
+                      event.target.classList.remove("invalid");
+                      setErrMessage({
+                        ...errMessage,
+                        phoneNumber: "",
+                      });
+                      console.log(errMessage.phoneNumber);
+                    }
+                  }}
+                  onBlur={(event) => {
+                    if (!event.target.value.match(`^\\+998\\d{9}$`)) {
+                      event.target.classList.add("invalid");
+                      setErrMessage({
+                        ...errMessage,
+                        phoneNumber:
+                          "Please specify your number correctly ex: +998 xx xxx xxxx",
+                      });
+                      console.log(errMessage.phoneNumber);
+                    }
+                  }}
                 />
+                <p className="text-red-500 text-sm mt-2">
+                  {errMessage.phoneNumber}
+                </p>
               </div>
             </div>
             <div>
@@ -162,7 +204,7 @@ export default function SignUpPage() {
               </div>
               <div className="mt-2">
                 <input
-                  id="password"
+                  id="pass"
                   name="password"
                   type="password"
                   title="Password should contain at least 8 chars. at least 1 uppercase letter, at least 1 lowercase letter and at least 1 number"
@@ -212,17 +254,32 @@ export default function SignUpPage() {
 
                     console.log("pass value: " + event.target.value);
                     console.log("confirm value: " + regUser.confirmPassValue);
+
+                    console.log(
+                      "conf error message: " + errMessage.confirmPassValue
+                    );
+                    setErrMessage({
+                      ...errMessage,
+                      passValue: myPass,
+                    });
+                  }}
+                  onKeyUp={(event) => {
                     if (event.target.value === regUser.confirmPassValue) {
                       setErrMessage({
                         ...errMessage,
                         confirmPassValue: "",
                       });
+                      console.log(
+                        "Confirm pass value inside the check:" +
+                          errMessage.confirmPassValue
+                      );
+                      console.log(errMessage);
                       document
-                        .getElementById("confirmPassword")
+                        .getElementById("confirmPass")
                         .classList.remove("invalid");
                     } else if (
                       !document
-                        .getElementById("confirmPassword")
+                        .getElementById("confirmPass")
                         .classList.contains("invalid")
                     ) {
                       setErrMessage({
@@ -233,26 +290,26 @@ export default function SignUpPage() {
                         .getElementById("confirmPassword")
                         .classList.add("invalid");
                     }
-                    console.log(
-                      "conf error message: " + errMessage.confirmPassValue
-                    );
-
-                    setErrMessage({
-                      ...errMessage,
-                      passValue: myPass,
-                    });
                   }}
                   autoComplete="new-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {Array.isArray(errMessage.passValue)
-                  ? errMessage.passValue.map((misMatch, index) => (
-                      <p key={index} className="text-red-500 text-sm mt-2">
-                        {misMatch}
-                      </p>
-                    ))
-                  : ""}
+                {Array.isArray(errMessage.passValue) ? (
+                  errMessage.passValue.map((misMatch, index) => (
+                    <p
+                      key={index}
+                      id={index}
+                      className="text-red-500 text-sm mt-2"
+                    >
+                      {misMatch}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-red-500 text-sm mt-2">
+                    {errMessage.passValue}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -267,7 +324,7 @@ export default function SignUpPage() {
               </div>
               <div className="mt-2">
                 <input
-                  id="confirmPassword"
+                  id="confirmPass"
                   name="confirmPassword"
                   type="password"
                   value={regUser.confirmPassValue}
@@ -309,6 +366,7 @@ export default function SignUpPage() {
                   //     event.target.classList.remove("invalid");
                   //   }
                   // }}
+
                   autoComplete="new-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -324,12 +382,29 @@ export default function SignUpPage() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6 disabled:bg-slate-300"
                 onClick={async (e) => {
+                  let returnState = false;
+                  let newErr = {};
+                  for (let field in regUser) {
+                    if (regUser[field].length === 0) {
+                      let elId = field.replace("Value", "");
+                      newErr[field] = "*Required";
+                      document.getElementById(elId).classList.add("invalid");
+                      console.log(field);
+                      returnState = true;
+                    }
+                  }
+                  console.log(newErr);
                   for (let errName in errMessage) {
                     if (errMessage[errName].length !== 0) {
-                      console.log(errMessage[errName]);
+                      newErr[errName] = errMessage[errName];
+                      console.log(errMessage);
+                      returnState = true;
                       return;
                     }
                   }
+                  console.log(newErr);
+                  setErrMessage(newErr);
+                  if (returnState) return;
                   setLoading(true);
                   try {
                     const res = await axios.post(
