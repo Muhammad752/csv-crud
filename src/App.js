@@ -7,14 +7,22 @@ import Protector from "./auth/Protector";
 import NotFound from "./pages/NotFound";
 import SingUpAlterNate from "./pages/SignUpAlternate";
 import useUser from "./auth/useUser";
+import Users from "./pages/USERS/Users";
 import CheckIfWorks from "./pages/Check";
 
 function App() {
   /*--------------------
   
-  Changing for checking
+  Changing for alert box
   
   --------------------*/
+  if (document.getElementById) {
+    window.alert = function (txt) {
+      console.log(alert);
+      // document.body.ch
+      return <p className='te text-red-500'>Warning</p>;
+    };
+  }
   let user = useUser();
   // localStorage.setItem(
   //   "ipoteka_token",
@@ -23,13 +31,32 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="sign" element={<SingUpAlterNate />} />
-        <Route index element={<Login user={user} />} />
+        <Route
+          path='sign'
+          element={<SingUpAlterNate />}
+        />
+        <Route
+          index
+          element={<Login user={user} />}
+        />
         <Route element={<Protector user={user} />}>
-          <Route path="/dataPage" element={<DataPage />} />
+          <Route
+            path='/dataPage'
+            element={<DataPage />}
+          />
         </Route>
-        <Route path="/signUp" element={<SignUpPage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route
+          path='/signUp'
+          element={<SignUpPage />}
+        />
+        <Route
+          path='/users'
+          element={<Users user={user} />}
+        />
+        <Route
+          path='*'
+          element={<NotFound />}
+        />
       </Routes>
     </BrowserRouter>
   );

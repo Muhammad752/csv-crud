@@ -5,7 +5,7 @@ import Loading from "../components/Loading";
 import axios from "axios";
 import useToken from "../auth/useToken";
 import "./SignUpPage.scss";
-import { bool } from "@inovua/reactdatagrid-community/filterTypes";
+import CustomAlert from "../components/CustomAlert/CustomAlert";
 
 export default function SignUpPage() {
   const emptyUser = {
@@ -26,6 +26,7 @@ export default function SignUpPage() {
   };
   const [token, setToken] = useToken();
   const [isLoading, setLoading] = useState(false);
+  const [signAlert, setAlert] = useState({ type: "", value: "" });
   const [regUser, setRegUser] = useState(emptyUser);
   const [errMessage, setErrMessage] = useState(emptyError);
 
@@ -33,29 +34,38 @@ export default function SignUpPage() {
 
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-row justify-center items-center h-screen">
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      {signAlert.type && (
+        <CustomAlert
+          type={signAlert.type}
+          content={signAlert.value}
+          setAlert={setAlert}
+        />
+      )}
+      <div className='flex min-h-full flex-1 flex-row justify-center items-center h-screen'>
+        <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
           <img
-            className="mx-auto h-30 w-auto"
+            className='mx-auto h-30 w-auto'
             src={process.env.PUBLIC_URL + "/images/ipoteka_bank-logo.jpg"}
-            alt="Your Company"
+            alt='Your Company'
           />
-          <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 p-4 pt-0">
+          <h2 className='text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 p-4 pt-0'>
             Register new account
           </h2>
-          <div className="space-y-4" action="#" method="POST">
+          <div
+            className='space-y-4'
+            action='#'
+            method='POST'>
             <div>
               <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
+                htmlFor='email'
+                className='block text-sm font-medium leading-6 text-gray-900'>
                 Email address
               </label>
-              <div className="mt-2">
+              <div className='mt-2'>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id='email'
+                  name='email'
+                  type='email'
                   value={regUser.emailValue}
                   onChange={(event) => {
                     setRegUser({ ...regUser, emailValue: event.target.value });
@@ -65,45 +75,69 @@ export default function SignUpPage() {
                         emailValue:
                           "Please write your email in correct format. (include @)",
                       });
+                      event.target.classList.add("invalid");
+                    } else if (event.target.classList.contains("invalid")) {
+                      setErrMessage({
+                        ...errMessage,
+                        emailValue: "",
+                      });
+                      event.target.classList.remove("invalid");
                     }
                   }}
-                  autoComplete="email"
+                  autoComplete='email'
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
-                <p className="text-red-500 text-sm mt-2">
+                <p className='text-red-500 text-sm mt-2'>
                   {errMessage.emailValue}
                 </p>
               </div>
             </div>
 
-            <div className="flex justify-between">
+            <div className='flex justify-between'>
               <div style={{ width: "48%" }}>
                 <label
-                  htmlFor="fname"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
+                  htmlFor='fname'
+                  className='block text-sm font-medium leading-6 text-gray-900'>
                   First Name
                 </label>
-                <div className="mt-2">
+                <div className='mt-2'>
                   <input
-                    id="fname"
-                    name="fname"
-                    type="fname"
+                    id='fname'
+                    name='fname'
+                    type='fname'
                     value={regUser.fnameValue}
                     minLength={3}
                     maxLength={25}
                     onChange={(event) => {
-                      setRegUser({
-                        ...regUser,
-                        fnameValue: event.target.value,
-                      });
+                      if (event)
+                        setRegUser({
+                          ...regUser,
+                          fnameValue: event.target.value,
+                        });
+
+                      if (
+                        event.target.value.length < 3 ||
+                        event.target.value.length > 25
+                      ) {
+                        setErrMessage({
+                          ...errMessage,
+                          fnameValue: "Length between 3 and 25",
+                        });
+                        event.target.classList.add("invalid");
+                      } else if (event.target.classList.contains("invalid")) {
+                        setErrMessage({
+                          ...errMessage,
+                          fnameValue: "",
+                        });
+                        event.target.classList.remove("invalid");
+                      }
                     }}
-                    autoComplete="fname"
+                    autoComplete='fname'
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none"
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none'
                   />
-                  <p className="text-red-500 text-sm mt-2">
+                  <p className='text-red-500 text-sm mt-2'>
                     {errMessage.fnameValue}
                   </p>
                 </div>
@@ -111,27 +145,45 @@ export default function SignUpPage() {
 
               <div style={{ width: "48%" }}>
                 <label
-                  htmlFor="lname"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
+                  htmlFor='lname'
+                  className='block text-sm font-medium leading-6 text-gray-900'>
                   Last Name
                 </label>
-                <div className="mt-2">
+                <div className='mt-2'>
                   <input
-                    id="lname"
-                    name="lname"
-                    type="lname"
+                    id='lname'
+                    name='lname'
+                    type='lname'
                     value={regUser.lnameValue}
                     minLength={3}
                     maxLength={25}
-                    onChange={(event) =>
-                      setRegUser({ ...regUser, lnameValue: event.target.value })
-                    }
-                    autoComplete="lname"
+                    onChange={(event) => {
+                      setRegUser({
+                        ...regUser,
+                        lnameValue: event.target.value,
+                      });
+                      if (
+                        event.target.value.length < 3 ||
+                        event.target.value.length > 25
+                      ) {
+                        setErrMessage({
+                          ...errMessage,
+                          lnameValue: "Length between 3 and 25",
+                        });
+                        event.target.classList.add("invalid");
+                      } else if (event.target.classList.contains("invalid")) {
+                        setErrMessage({
+                          ...errMessage,
+                          lnameValue: "",
+                        });
+                        event.target.classList.remove("invalid");
+                      }
+                    }}
+                    autoComplete='lname'
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none"
+                    className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3 focus-visible:outline-none'
                   />
-                  <p className="text-red-500 text-sm mt-2">
+                  <p className='text-red-500 text-sm mt-2'>
                     {errMessage.lnameValue}
                   </p>
                 </div>
@@ -139,30 +191,29 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
+              <div className='flex items-center justify-between'>
                 <label
-                  htmlFor="phoneNumber"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
+                  htmlFor='phoneNumber'
+                  className='block text-sm font-medium leading-6 text-gray-900'>
                   Telephone Number
                 </label>
               </div>
-              <div className="mt-2">
+              <div className='mt-2'>
                 <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  title="Phone number must start with +998 and must contain 12 numbers"
+                  id='phoneNumber'
+                  name='phoneNumber'
+                  type='tel'
+                  title='Phone number must start with +998 and must contain 12 numbers'
                   maxLength={13}
                   value={regUser.phoneNumber}
                   onChange={(event) => {
                     setRegUser({ ...regUser, phoneNumber: event.target.value });
                   }}
-                  autoComplete="new-phoneNumber"
+                  autoComplete='new-phoneNumber'
                   required
-                  pattern="^\+998\d{9}$"
-                  placeholder="+998 xx xxx xx xx"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  pattern='^\+998\d{9}$'
+                  placeholder='+998 xx xxx xx xx'
+                  className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                   onKeyUp={(event) => {
                     if (
                       event.target.value.match(`^\\+998\\d{9}$`) &&
@@ -188,27 +239,26 @@ export default function SignUpPage() {
                     }
                   }}
                 />
-                <p className="text-red-500 text-sm mt-2">
+                <p className='text-red-500 text-sm mt-2'>
                   {errMessage.phoneNumber}
                 </p>
               </div>
             </div>
             <div>
-              <div className="flex items-center justify-between">
+              <div className='flex items-center justify-between'>
                 <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
+                  htmlFor='password'
+                  className='block text-sm font-medium leading-6 text-gray-900'>
                   Password
                 </label>
               </div>
-              <div className="mt-2">
+              <div className='mt-2'>
                 <input
-                  id="pass"
-                  name="password"
-                  type="password"
-                  title="Password should contain at least 8 chars. at least 1 uppercase letter, at least 1 lowercase letter and at least 1 number"
-                  pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"
+                  id='pass'
+                  name='password'
+                  type='password'
+                  title='Password should contain at least 8 chars. at least 1 uppercase letter, at least 1 lowercase letter and at least 1 number'
+                  pattern='(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}'
                   value={regUser.passValue}
                   onChange={(event) => {
                     setRegUser({ ...regUser, passValue: event.target.value });
@@ -287,26 +337,25 @@ export default function SignUpPage() {
                         confirmPassValue: "passwords didn't match",
                       });
                       document
-                        .getElementById("confirmPassword")
+                        .getElementById("confirmPass")
                         .classList.add("invalid");
                     }
                   }}
-                  autoComplete="new-password"
+                  autoComplete='new-password'
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
                 {Array.isArray(errMessage.passValue) ? (
                   errMessage.passValue.map((misMatch, index) => (
                     <p
                       key={index}
                       id={index}
-                      className="text-red-500 text-sm mt-2"
-                    >
+                      className='text-red-500 text-sm mt-2'>
                       {misMatch}
                     </p>
                   ))
                 ) : (
-                  <p className="text-red-500 text-sm mt-2">
+                  <p className='text-red-500 text-sm mt-2'>
                     {errMessage.passValue}
                   </p>
                 )}
@@ -314,19 +363,18 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
+              <div className='flex items-center justify-between'>
                 <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
+                  htmlFor='confirmPassword'
+                  className='block text-sm font-medium leading-6 text-gray-900'>
                   Confirm your password
                 </label>
               </div>
-              <div className="mt-2">
+              <div className='mt-2'>
                 <input
-                  id="confirmPass"
-                  name="confirmPassword"
-                  type="password"
+                  id='confirmPass'
+                  name='confirmPassword'
+                  type='password'
                   value={regUser.confirmPassValue}
                   onChange={(event) => {
                     setRegUser({
@@ -367,20 +415,20 @@ export default function SignUpPage() {
                   //   }
                   // }}
 
-                  autoComplete="new-password"
+                  autoComplete='new-password'
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                 />
-                <p className="text-red-500 text-sm mt-2">
+                <p className='text-red-500 text-sm mt-2'>
                   {errMessage.confirmPassValue}
                 </p>
               </div>
             </div>
 
-            <div className="register_signUp_links">
+            <div className='register_signUp_links'>
               <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6 disabled:bg-slate-300"
+                type='submit'
+                className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-6 disabled:bg-slate-300'
                 onClick={async (e) => {
                   let returnState = false;
                   let newErr = {};
@@ -399,12 +447,19 @@ export default function SignUpPage() {
                       newErr[errName] = errMessage[errName];
                       console.log(errMessage);
                       returnState = true;
-                      return;
                     }
                   }
                   console.log(newErr);
                   setErrMessage(newErr);
-                  if (returnState) return;
+                  if (returnState) {
+                    setAlert({
+                      type: "info",
+                      value: " Fill the required fields",
+                    });
+                    console.log("Return state");
+                    console.log(signAlert);
+                    return;
+                  }
                   setLoading(true);
                   try {
                     const res = await axios.post(
@@ -419,27 +474,33 @@ export default function SignUpPage() {
                     );
                     if (res) {
                       setLoading(false);
+                      console.log(res);
                     }
                     if (res.status === 200) {
-                      alert("Please verify your number at telegram bot");
+                      setAlert({
+                        type: "success",
+                        value: "Please verify your number at telegram bot",
+                      });
+                      navigate("/");
                     }
                     setRegUser(emptyUser);
                     // window.location.href = "https://t.me/Test_r_bbbot";
                   } catch (e) {
                     setLoading(false);
-                    alert(e.message);
                     setRegUser(emptyUser);
+                    setAlert({
+                      type: "error",
+                      value: " " + e.message,
+                    });
                   }
-                }}
-              >
+                }}>
                 Sign up
                 {isLoading && <Loading />}
               </button>
-              <div className="text-sm mt-4 text-center">
+              <div className='text-sm mt-4 text-center'>
                 <Link
-                  to="/"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
+                  to='/'
+                  className='font-semibold text-indigo-600 hover:text-indigo-500'>
                   Or login to your account
                 </Link>
               </div>
