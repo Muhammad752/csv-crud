@@ -17,18 +17,14 @@ const LoanPanel = ({ data, showModal }) => {
 
       try {
         const response = await axios.get(
-          process.env.REACT_APP_PROXY +
-            "/loans/pinfl/" +
-            data.pinfl +
-            "/branchInfo/" +
-            data.branchInfo,
+          process.env.REACT_APP_PROXY + "/loans/pinfl/" + data.id,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         const newData = response.data;
         if (newData) {
-          setLoanInfo(newData);
+          setLoanInfo(newData.data);
         }
       } catch (e) {
         console.log(e.message);
@@ -36,31 +32,31 @@ const LoanPanel = ({ data, showModal }) => {
       }
     }
     loadArticle();
-  }, [isRefresh, data.pinfl, data.branchInfo]);
+  }, [isRefresh, data.pinflValue, data.branchInfo]);
 
   if (loanInfo)
     return (
       <div
-        className="loan__background flex items-center"
+        className='loan__background flex items-center'
         onClick={(ev) => {
           if (ev.target.classList[0] === "loan__background") {
             showModal();
           }
-        }}
-      >
+        }}>
         <div
-          className="loan__panel h-1/2 w-11/12 md:w-1/2 p-6 bg-white rounded-md overflow-auto flex flex-col justify-between"
-          ref={divRef}
-        >
+          className='loan__panel h-1/2 w-11/12 md:w-1/2 p-6 bg-white rounded-md overflow-auto flex flex-col justify-between'
+          ref={divRef}>
           <div>
-            <div className="w-full flex flex-row mb-12 justify-between">
+            <div className='w-full flex flex-row mb-12 justify-between'>
               <h1>Loan Info</h1>
-              <span onClick={showModal} className="cursor-pointer">
+              <span
+                onClick={showModal}
+                className='cursor-pointer'>
                 X
               </span>
             </div>
-            <div className="loan__data mb-12">
-              <h3>PINFL: {data.pinfl}</h3>
+            <div className='loan__data mb-12'>
+              <h3>PINFL: {data.pinflValue}</h3>
               <h3>Branch Info: {data.branchInfo}</h3>
             </div>
             <div>
@@ -84,23 +80,23 @@ const LoanPanel = ({ data, showModal }) => {
               )}
             </div>
           </div>
-          <footer id="submitLoan" className="">
+          <footer
+            id='submitLoan'
+            className=''>
             <hr />
-            <p className="flex justify-end">
-              <a href="#submitLoan">
+            <p className='flex justify-end'>
+              <a href='#submitLoan'>
                 <button
-                  className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                  className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
                   onClick={() => {
                     toggleCreate();
-                  }}
-                >
+                  }}>
                   CREATE
                 </button>
               </a>
               <button
-                className="mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
-                onClick={showModal}
-              >
+                className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
+                onClick={showModal}>
                 Close
               </button>
             </p>

@@ -3,24 +3,23 @@ import { RiFileExcel2Fill } from "react-icons/ri";
 import { ImAddressBook } from "react-icons/im";
 import { useEffect, useState, useReducer } from "react";
 import axios from "axios";
-import TableRow from "./TableRow";
+import UsersTable from "../UsersTable/UsersTable";
 import Loading from "../Loading";
 import useToken from "../../auth/useToken";
-import AddPinflModal from "../AddPinflModal/AddPinflModal";
-import "./DataReneder.scss";
-
-export default function DataRender({ data, refreshMainList, setData }) {
+import AddNewUser from "../AddNewUser/AddNewUser";
+export default function UsersRender({ data, refreshMainList, setData }) {
   const [token] = useToken();
   const [searchKey, setSearchKey] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const [addPinflModal, showPinflAdd] = useReducer((modal) => !modal, false);
+  const [addNewUser, showPinflAdd] = useReducer((modal) => !modal, false);
 
   if (data)
     return (
       <div className='flex flex-col max-w-[80%] m-auto'>
         {isLoading && <Loading />}
-        {addPinflModal && (
-          <AddPinflModal
+
+        {addNewUser && (
+          <AddNewUser
             showPinflAdd={showPinflAdd}
             refreshMainList={refreshMainList}
           />
@@ -93,59 +92,14 @@ export default function DataRender({ data, refreshMainList, setData }) {
 
             <div className='flex items-center space-x-2'>
               <div className='relative gap-4 flex'>
-                <button
-                  className='relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'
-                  onClick={showPinflAdd}>
-                  <span className='relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2'>
+                <button className='relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'>
+                  <span
+                    className='relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2'
+                    onClick={showPinflAdd}>
                     <div>
                       <ImAddressBook style={{ width: "10px" }} />
                     </div>
-                    <div className='hidden sm:block'>Add pinfl</div>
-                  </span>
-                </button>
-                <button className='download_csv_button relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'>
-                  <span className='relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2'>
-                    <div>
-                      <RiFileExcel2Fill />
-                    </div>
-                    <div
-                      className='hidden sm:block'
-                      onClick={async () => {
-                        {
-                          setLoading(true);
-                          try {
-                            const response = await axios.get(
-                              process.env.REACT_APP_PROXY + "/pinfl/download/",
-                              {
-                                headers: { Authorization: `Bearer ${token}` },
-                                responseType: "blob",
-                              }
-                            );
-                            const blob = new Blob([response.data]);
-
-                            // Create a temporary anchor element
-                            const link = document.createElement("a");
-                            link.href = URL.createObjectURL(blob);
-                            link.download = "pinfls.xlsx";
-
-                            // Programmatically trigger the download
-                            link.click();
-
-                            // Clean up the temporary anchor element
-                            URL.revokeObjectURL(link.href);
-                            link.remove();
-
-                            console.log("File downloaded successfully!");
-                          } catch (error) {
-                            // Handle error
-                            console.error("Error downloading file:", error);
-                            setLoading(false);
-                          }
-                          setLoading(false);
-                        }
-                      }}>
-                      Download EXCEL
-                    </div>
+                    <div className='hidden sm:block'>Add new user</div>
                   </span>
                 </button>
               </div>
@@ -160,22 +114,27 @@ export default function DataRender({ data, refreshMainList, setData }) {
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
-                      №
+                      First name
                     </th>
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
-                      Branch Info
+                      Last name
                     </th>
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
-                      Pinfl
+                      Email
+                    </th>
+                    <th
+                      scope='col'
+                      className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
+                      Phone number
                     </th>
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
-                      Edit
+                      Promote
                     </th>
                     <th
                       scope='col'
@@ -188,7 +147,7 @@ export default function DataRender({ data, refreshMainList, setData }) {
                 <tbody className='divide-y divide-gray-200'>
                   {console.log(data)}
                   {data.map((row) => (
-                    <TableRow
+                    <UsersTable
                       data={row}
                       refreshMainList={refreshMainList}
                     />

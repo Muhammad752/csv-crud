@@ -10,66 +10,72 @@ import "./MainPages.scss";
 import Pagination from "../components/Pagination";
 import DataRender from "../components/Draft/DataRender";
 import UserProfile from "../components/UserProfile/UserProfile";
-
-const imageUrl =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp_3YqeetRoOdPsnESJq-J6MuPOrYpmZqxig&usqp=CAU";
-
-const navigation = [
-  { name: "Dashboard", href: "/dataPage", current: true },
-  { name: "Users", href: "/users", current: false },
-];
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  {
-    name: "Delete account",
-    href: "#",
-    onclick: async () => {
-      try {
-        const res = await axios.delete(
-          process.env.REACT_APP_PROXY + "/api/auth/delete"
-        );
-        console.log(res);
-        localStorage.removeItem("ipoteka_token");
-      } catch (e) {
-        alert(e.message);
-        console.log(e.message);
-      }
-    },
-  },
-  {
-    name: "Sign out",
-    href: "/",
-    onclick: () => {
-      localStorage.removeItem("ipoteka_token");
-    },
-  },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import Loading from "../components/Loading";
 
 export default function DataPage() {
   const user = useUser();
+  const [isLoading, setIsLoading] = useState(false);
   const [token] = useToken();
-  console.log(user);
   console.log("My user");
   console.log(user);
   const [data, setData] = useState();
   const [mainListRefresh, refreshMainList] = useReducer((a) => !a, false);
-  const [pageNum, setPageNum] = useState(1);
+  const [pageNum, setPageNum] = useState(0);
+  const [userProfile, showUser] = useReducer(function (a) {
+    return !a;
+  }, false);
+
+  const imageUrl =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp_3YqeetRoOdPsnESJq-J6MuPOrYpmZqxig&usqp=CAU";
+
+  const navigation = [
+    { name: "Dashboard", href: "/dataPage", current: true },
+    { name: "Users", href: "/users", current: false },
+  ];
+  const userNavigation = [
+    { name: "Your Profile", href: "#", onclick: () => showUser() },
+    { name: "Settings", href: "#" },
+    {
+      name: "Delete account",
+      href: "#",
+      onclick: async () => {
+        try {
+          const res = await axios.delete(
+            process.env.REACT_APP_PROXY + "/api/auth/delete"
+          );
+          console.log(res);
+          localStorage.removeItem("ipoteka_token");
+        } catch (e) {
+          alert(e.message);
+          console.log(e.message);
+        }
+      },
+    },
+    {
+      name: "Sign out",
+      href: "/",
+      onclick: () => {
+        localStorage.removeItem("ipoteka_token");
+      },
+    },
+  ];
+
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+
   useEffect(() => {
     async function loadArticle() {
-      // const response = await axios.get(`/offlineData.json`);
       try {
+        // const response = await axios.get(`/offlineData.json`);
+        setIsLoading(true);
         const response = await axios.get(
           process.env.REACT_APP_PROXY + `/pinfl/`,
           {
             headers: { Authorization: `Bearer ${token}` },
             params: {
               page: pageNum,
-              size: 15,
+              size: 18,
             },
           }
         );
@@ -77,18 +83,23 @@ export default function DataPage() {
         if (newArticle) {
           setData(newArticle);
         }
+        setIsLoading(false);
       } catch (e) {
         console.log(e.message);
         localStorage.removeItem("ipoteka_token");
+        setIsLoading(false);
       }
     }
     loadArticle();
   }, [mainListRefresh]);
-  if (data) console.log(data);
+  if (data) {
+    console.log("DATA IS=");
+    console.log(data);
+  }
   if (data)
     return (
       <>
-        <UserProfile />
+        {userProfile && <UserProfile showUser={showUser} />}
         <div className='min-h-full'>
           <Disclosure
             as='nav'
@@ -273,18 +284,22 @@ export default function DataPage() {
           </header>
           <main>
             <div className='mx-auto py-6 sm:px-6 lg:px-8 '>
-              {data && (
-                <>
-                  <DataRender
-                    data={data.content}
-                    refreshMainList={refreshMainList}
-                  />
-                  {/* <DataPageOption
+              {data &&
+                (isLoading ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <DataRender
+                      data={data.content}
+                      refreshMainList={refreshMainList}
+                      setData={setData}
+                    />
+                    {/* <DataPageOption
                     data={data.content}
                     refreshMainList={refreshMainList}
                   /> */}
-                </>
-              )}
+                  </>
+                ))}
               <Pagination
                 data={data}
                 refreshMainList={refreshMainList}

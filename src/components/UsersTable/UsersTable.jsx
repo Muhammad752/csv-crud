@@ -4,10 +4,11 @@ import LoanPanel from "../LoanPanel/LoanPanel";
 import Loading from "../Loading";
 import axios from "axios";
 
-const TableRow = ({ data, refreshMainList }) => {
+const UsersTable = ({ data, refreshMainList }) => {
   const [token] = useToken();
   const [isLoading, setIsLoading] = useState(false);
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
+  console.log(data);
   return (
     <>
       {isLoading && <Loading />}
@@ -19,21 +20,23 @@ const TableRow = ({ data, refreshMainList }) => {
       )}
       <tr>
         <td className='px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap'>
-          {data.id}
+          {data.firstName}
         </td>
         <td className='px-6 py-4 text-sm text-gray-800 whitespace-nowrap'>
-          {data.branchInfo}
+          {data.lastName}
         </td>
-
         <td className='px-6 py-4 text-sm text-gray-800 whitespace-nowrap'>
-          {data.pinflValue}
+          {data.email}
+        </td>
+        <td className='px-6 py-4 text-sm text-gray-800 whitespace-nowrap'>
+          {data.username}
         </td>
         <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
           <a
             className='text-green-500 hover:text-green-700'
             href='#'
             onClick={showModalPage}>
-            Preview
+            Change role
           </a>
         </td>
         <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
@@ -44,7 +47,7 @@ const TableRow = ({ data, refreshMainList }) => {
               setIsLoading(true);
               try {
                 const response = await axios.delete(
-                  process.env.REACT_APP_PROXY + "/pinfl/" + data.id,
+                  process.env.REACT_APP_PROXY2 + "/api/auth/delete" + data.id,
                   {
                     headers: { Authorization: `Bearer ${token}` },
                   }
@@ -88,4 +91,4 @@ const TableRow = ({ data, refreshMainList }) => {
   );
 };
 
-export default TableRow;
+export default UsersTable;

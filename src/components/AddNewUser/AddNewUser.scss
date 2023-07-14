@@ -1,4 +1,4 @@
-.user {
+.addUser {
   &__background {
     display: flex;
     justify-content: center;
@@ -9,28 +9,21 @@
     background-color: rgba(0, 0, 0, 0.452);
     z-index: 22;
     label {
-      width: 140px;
       display: inline-block;
-      //   width: 180px;
+      width: 100px;
     }
     input {
-      padding: 0;
-      width: fit-content;
       overflow: auto;
       border: none;
-      border-bottom: 1px solid transparent;
-      &:active {
-        border-color: gray;
-      }
+      padding: 0;
+      margin: 5px;
+      border-bottom: 1px solid gray;
+      // &:active {
+      //   border-color: gray;
+      // }
       &:focus {
         box-shadow: none;
       }
     }
-  }
-  &__panel {
-    width: 480px;
-    padding: 30px;
-    box-shadow: 0 0 60px;
-    // height: 80%;
   }
 }

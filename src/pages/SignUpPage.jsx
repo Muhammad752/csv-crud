@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Loading from "../components/Loading";
 import axios from "axios";
-import useToken from "../auth/useToken";
 import "./SignUpPage.scss";
 import CustomAlert from "../components/CustomAlert/CustomAlert";
+// import useToken from "../auth/useToken";
 
 export default function SignUpPage() {
   const emptyUser = {
@@ -24,7 +24,7 @@ export default function SignUpPage() {
     passValue: [],
     confirmPassValue: "",
   };
-  const [token, setToken] = useToken();
+  // const [token, setToken] = useToken();
   const [isLoading, setLoading] = useState(false);
   const [signAlert, setAlert] = useState({ type: "", value: "" });
   const [regUser, setRegUser] = useState(emptyUser);

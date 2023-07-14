@@ -156,12 +156,13 @@ export default function Login({ user }) {
                       );
                       return;
                     }
-                    if (e.response.status === 400)
+                    if (e.response.status === 400 || e.response.status === 404)
                       setLoginError("User credentials not found");
                     else {
+                      console.log(e.response);
                       setAlert({
-                        type: "info",
-                        value: " Fill the required fields",
+                        type: "error",
+                        value: " Check netw",
                       });
                     }
                     console.log(e.message);

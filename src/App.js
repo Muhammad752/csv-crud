@@ -16,13 +16,13 @@ function App() {
   Changing for alert box
   
   --------------------*/
-  if (document.getElementById) {
-    window.alert = function (txt) {
-      console.log(alert);
-      // document.body.ch
-      return <p className='te text-red-500'>Warning</p>;
-    };
-  }
+  // if (document.getElementById) {
+  //   window.alert = function (txt) {
+  //     console.log(alert);
+  //     // document.body.ch
+  //     return <p className='te text-red-500'>Warning</p>;
+  //   };
+  // }
   let user = useUser();
   // localStorage.setItem(
   //   "ipoteka_token",
@@ -32,12 +32,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path='sign'
-          element={<SingUpAlterNate />}
-        />
-        <Route
           index
           element={<Login user={user} />}
+        />
+        <Route
+          path='sign'
+          element={<SingUpAlterNate />}
         />
         <Route element={<Protector user={user} />}>
           <Route

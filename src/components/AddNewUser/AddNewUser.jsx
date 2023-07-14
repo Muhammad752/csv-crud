@@ -1,42 +1,46 @@
 import axios from "axios";
-import "./AddPinflModal.scss";
+import "./AddNewUser.scss";
 import { useState } from "react";
 import useToken from "../../auth/useToken";
 
-const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
+const AddNewUser = ({ showUserAdd, refreshMainList }) => {
   const [token] = useToken();
-  const emptyPinflData = {
-    pinflValue: "",
-    branchInfo: "",
+  const emptyUser = {
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    roles: [],
   };
-  const [pinflData, setPinflData] = useState(emptyPinflData);
+  const [userData, setUserData] = useState(emptyUser);
   return (
     <div
-      className='addPinfl__background flex items-center'
+      className='addUser__background flex items-center'
       onClick={(ev) => {
-        if (ev.target.classList[0] === "addPinfl__background") {
-          showPinflAdd();
+        if (ev.target.classList[0] === "addUser__background") {
+          showUserAdd();
         }
       }}>
-      <div className='addPinfl__panel  w-11/12 md:w-1/3 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between'>
+      <div className='addUser__panel  w-11/12 md:w-1/3 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between'>
         <div>
           <div className='w-full flex flex-row mb-12 justify-between'>
-            <h1>ADD NEW PINFL</h1>
+            <h1>ADD NEW USER</h1>
             <span
-              onClick={showPinflAdd}
+              onClick={showUserAdd}
               className='cursor-pointer'>
               X
             </span>
           </div>
-          <div className='addPinfl__data mb-12'>
+          <div className='addUser__data mb-12'>
             <div>
-              <label>PINFL: </label>
+              <label>First Name: </label>
               <input
                 type='text'
-                value={pinflData.pinfl}
+                value={userData.pinfl}
                 onChange={(e) =>
-                  setPinflData({
-                    ...pinflData,
+                  setUserData({
+                    ...userData,
                     pinflValue: e.target.value,
                   })
                 }
@@ -46,10 +50,10 @@ const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
               <label>Branch Info: </label>
               <input
                 type='text'
-                value={pinflData.branchInfo}
+                value={userData.branchInfo}
                 onChange={(e) =>
-                  setPinflData({
-                    ...pinflData,
+                  setUserData({
+                    ...userData,
                     branchInfo: e.target.value,
                   })
                 }
@@ -66,7 +70,7 @@ const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
                 try {
                   const res = await axios.post(
                     process.env.REACT_APP_PROXY + "/pinfl",
-                    pinflData,
+                    userData,
                     {
                       headers: { Authorization: `Bearer ${token}` },
                     }
@@ -75,13 +79,13 @@ const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
                 } catch (e) {
                   console.log(e.meassage);
                 }
-                showPinflAdd();
+                showUserAdd();
               }}>
               CREATE
             </button>
             <button
               className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
-              onClick={showPinflAdd}>
+              onClick={showUserAdd}>
               Close
             </button>
           </p>
@@ -91,4 +95,4 @@ const AddPinflModal = ({ showPinflAdd, refreshMainList }) => {
   );
 };
 
-export default AddPinflModal;
+export default AddNewUser;
