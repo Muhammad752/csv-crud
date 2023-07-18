@@ -43,7 +43,11 @@ function App() {
           <Route
             path='/dataPage'
             element={<DataPage />}
-          />
+          />  
+        <Route
+          path='/users'
+          element={<Users user={user} />}
+        />
         </Route>
         <Route
           path='/signUp'

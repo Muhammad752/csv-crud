@@ -1,8 +1,26 @@
 import "./UserProfile.scss";
 import useUser from "../../auth/useUser";
+import { useEffect, useReducer, useState } from "react";
+import useToken from "../../auth/useToken";
+import useRefreshToken from "../../auth/useRefreshToken";
+import axios from "axios";
 
 const UserProfile = ({ showUser }) => {
-  let userInfo = useUser();
+  const [token,setToken]=useToken()
+  const [refreshToken,setRefreshToken]=useRefreshToken()
+  const userInfo=useUser()
+
+  const [isEditable,setIsEditable]=useReducer((a)=>!a,false);
+
+    const initialUser={
+      email:userInfo.email,
+      firstName:userInfo.given_name,
+      lastName:userInfo.family_name,
+    }
+
+  const [currentUser,setCurrentUser]=useState(initialUser)
+  console.log("User info is");
+  console.log(userInfo);
   console.log(userInfo.name);
   return (
     <div
@@ -28,7 +46,11 @@ const UserProfile = ({ showUser }) => {
               type='text'
               name=''
               id='p-name'
-              value={userInfo.family_name}
+              value={currentUser.firstName}
+              onChange={(event)=>{
+                setCurrentUser({...currentUser,firstName:event.target.value})
+              }}
+              disabled={!isEditable}
             />
           </div>
           <br />
@@ -38,7 +60,13 @@ const UserProfile = ({ showUser }) => {
               type='text'
               name=''
               id=''
-              value={userInfo.given_name}
+              
+              value={currentUser.lastName}
+              onChange={(event)=>{
+                setCurrentUser({...currentUser,lastName:event.target.value})
+              }}
+              
+              disabled={!isEditable}
             />
           </div>
 
@@ -49,7 +77,12 @@ const UserProfile = ({ showUser }) => {
               type='text'
               name=''
               id='p-email'
-              value={userInfo.email}
+              value={currentUser.email}
+              onChange={(event)=>{
+                setCurrentUser({...currentUser,email:event.target.value})
+              }}
+              
+              disabled={!isEditable}
             />
           </div>
           <br />
@@ -60,6 +93,7 @@ const UserProfile = ({ showUser }) => {
               name=''
               id='p-email'
               value={userInfo.preferred_username}
+              disabled
             />
           </div>
         </div>
@@ -71,9 +105,48 @@ const UserProfile = ({ showUser }) => {
           <hr />
           <p className='flex justify-end'>
             <a href='#submitLoan'>
-              <button className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'>
+              {!isEditable?
+              <button className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
+              onClick={setIsEditable}>
                 Edit
               </button>
+                :
+                <>
+              <button className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
+              onClick={async()=>{
+                const res= await axios.post(process.env.REACT_APP_PROXY2+"/api/auth/update",currentUser,{
+                  headers: { Authorization: `Bearer ${token}` },
+                })
+                
+                const res2 = await axios.post(
+                  process.env.REACT_APP_PROXY2 + "/api/auth/refresh/token?refreshTokenRequest="+refreshToken,
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                  }
+                );
+                console.log(res2);
+                if(res2){
+                  console.log("response with tokens");
+                  console.log(res2);
+                  const { access_token,refresh_token } = res2.data;
+                  setToken(access_token);
+                  setRefreshToken(refresh_token)
+                }
+                console.log(res);
+                setIsEditable()
+                }}>
+                Upload
+              </button>
+              <button className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
+              onClick={()=>{
+                setIsEditable()
+                setCurrentUser(initialUser)
+              }
+                }>
+                Cancel
+              </button>
+              </>
+              }
             </a>
             <button
               className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'

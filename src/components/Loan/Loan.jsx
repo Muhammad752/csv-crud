@@ -103,13 +103,18 @@ const Loan = ({ data, value, setRefresh }) => {
                     process.env.REACT_APP_PROXY +
                       "/loans/update/" +
                       singleLoan.id,
-                    { ...singleLoan }
-                    // {
-                    //   headers: { Authorization: `Bearer ${token}` },
-                    // }
+                    { ...singleLoan },
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
                   );
                   console.log("response is");
                   console.log(resp);
+                  if(resp){
+
+                    setRefresh()
+                    setEditable(false)
+                  } 
                 } catch (e) {
                   console.log(e);
                 }

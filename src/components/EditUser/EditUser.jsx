@@ -1,12 +1,16 @@
 import axios from "axios";
-import "./AddNewUser.scss";
-import { useState } from "react";
+import "./EditUser.scss";
+import { useEffect, useState } from "react";
 import useToken from "../../auth/useToken";
+import useRefreshToken from "../../auth/useRefreshToken";
+import Loading from "../Loading";
 
 
-const AddNewUser = ({ showUserAdd, refreshMainList }) => {
-  const [roles,setRoles]=useState({
-    "ROLE_USER":false,
+const EditUser = ({ showUserEdit, refreshMainList,data }) => {
+  const [refreshToken,setRefreshToken]=useRefreshToken()
+  const [isLoading,setIsLoading]=useState(false)
+  let emptyRoles={
+"ROLE_USER":false,
     "ROLE_USER_READ_FILE":false,
     "ROLE_USER_CREATE_FILE":false,
     "ROLE_USER_UPDATE_FILE":false,
@@ -16,40 +20,34 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
     "ROLE_ADMIN_READ_USER":false,
     "ROLE_ADMIN_UPDATE_USER":false,
     "ROLE_ADMIN_DELETE_USER":false,
+  }
+  data.roles.forEach((val)=>{
+    emptyRoles[val.name]=true
   })
-  const [newUser,setNewUser]=useState({
-    email:"",
-    password:"",
-    firstName:"",
-    lastName:"",
-    phoneNumber:"",
-    password:"",
-    roles:[]
-  })
-  const [token] = useToken();
-  const emptyUser = {
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    roles: [],
+  const [roles,setRoles]=useState(emptyRoles)
+  const [token,setToken] = useToken();
+  const initialUser = {
+    email: data.email,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    roles: data.roles,
   };
-  const [userData, setUserData] = useState(emptyUser);
+  const [userData, setUserData] = useState(initialUser);
   return (
     <div
       className='addUser__background flex items-center'
       onClick={(ev) => {
         if (ev.target.classList[0] === "addUser__background") {
-          showUserAdd();
+          showUserEdit();
         }
       }}>
+        {isLoading && <Loading/>}
       <div className='addUser__panel  w-11/12 md:w-1/3 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between'>
         <div>
           <div className='w-full flex flex-row mb-12 justify-between'>
             <h1>ADD NEW USER</h1>
             <span
-              onClick={showUserAdd}
+              onClick={showUserEdit}
               className='cursor-pointer'>
               X
             </span>
@@ -82,32 +80,6 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
               />
             </div>
             <div>
-              <label>Phone number: </label>
-              <input
-                type='text'
-                value={userData.username}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    phoneNumber: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
-              <label>Password: </label>
-              <input
-                type='text'
-                value={userData.password}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    password: e.target.value,
-                  })
-                }
-              />
-            </div>
-            <div>
               <label>Email: </label>
               <input
                 type='text'
@@ -132,8 +104,7 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
               <label htmlFor="role_user">ROLE USER</label>
               <input id="role_user" type="checkbox" checked={roles.ROLE_USER}
               onChange={(ev)=>{setRoles({...roles,"ROLE_USER":ev.target.checked,"ROLE_USER_CREATE_FILE":ev.target.checked,"ROLE_USER_DELETE_FILE":ev.target.checked,"ROLE_USER_READ_FILE":ev.target.checked,"ROLE_USER_UPDATE_FILE":ev.target.checked})
-              console.log("ROLES");
-            console.log(roles);
+              
             }}
               />
               </div>
@@ -229,27 +200,26 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                     rolesArr.push(key)
                   }
                 };
-                console.log(rolesArr);
                 try {
                   const res = await axios.post(
-                    process.env.REACT_APP_PROXY2 + "/api/admin/create-user",
-                    {...userData,roles:rolesArr},
+                    process.env.REACT_APP_PROXY2 + "/api/admin/users/" +data.id,
+                    {...userData,roles:rolesArr,enabled:data.enabled},
                     {
                       headers: { Authorization: `Bearer ${token}` },
                     }
                   );
-                  console.log(res);
                   refreshMainList();
                 } catch (e) {
-                  console.log(e.meassage);
+                  console.log({...userData,roles:rolesArr});
+                  console.log(e);
                 }
-                showUserAdd();
+                showUserEdit();
               }}>
-              CREATE
+              SUBMIT
             </button>
             <button
               className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
-              onClick={showUserAdd}>
+              onClick={showUserEdit}>
               Close
             </button>
           </p>
@@ -259,4 +229,4 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
   );
 };
 
-export default AddNewUser;
+export default EditUser;

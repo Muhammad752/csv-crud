@@ -3,6 +3,7 @@ import { useState } from "react";
 import CustomAlert from "../components/CustomAlert/CustomAlert";
 import Loading from "../components/Loading";
 import useToken from "../auth/useToken";
+import useRefreshToken from "../auth/useRefreshToken";
 import axios from "axios";
 
 export default function Login({ user }) {
@@ -10,6 +11,7 @@ export default function Login({ user }) {
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useToken("");
+  const [refreshToken,setRefreshToken]=useRefreshToken("")
   const [signAlert, setAlert] = useState({ type: "", value: "" });
   const emptyLogin = {
     telNum: "",
@@ -136,10 +138,11 @@ export default function Login({ user }) {
                         password: loginData.passValue,
                       }
                     );
-                    const { access_token } = res.data;
+                    const { access_token,refresh_token } = res.data;
                     console.log("access token is");
                     console.log(access_token);
                     setToken(access_token);
+                    setRefreshToken(refresh_token)
                     console.log(loginData);
                     window.location.reload();
                   } catch (e) {

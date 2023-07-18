@@ -27,10 +27,12 @@ export default function DataPage() {
 
   const imageUrl =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp_3YqeetRoOdPsnESJq-J6MuPOrYpmZqxig&usqp=CAU";
+  const userPage=useUser().realm_access.roles.includes("ROLE_ADMIN")?
+  { name: "Users", href: "/users", current: false }:""
 
+  console.log(useUser().realm_access.roles.includes("ROLE_ADMIN"));
   const navigation = [
-    { name: "Dashboard", href: "/dataPage", current: true },
-    { name: "Users", href: "/users", current: false },
+    { name: "Dashboard", href: "/dataPage", current: true },userPage
   ];
   const userNavigation = [
     { name: "Your Profile", href: "#", onclick: () => showUser() },

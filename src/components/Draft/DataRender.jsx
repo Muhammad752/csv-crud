@@ -48,7 +48,7 @@ export default function DataRender({ data, refreshMainList, setData }) {
                       setLoading(true);
                       try {
                         const res = await axios.get(
-                          "http://192.168.14.155:9091/pinfl/search/",
+                          process.env.REACT_APP_PROXY+ "/pinfl/search/",
                           {
                             headers: { Authorization: `Bearer ${token}` },
                             params: {

@@ -19,11 +19,12 @@
       overflow: auto;
       border: none;
       border-bottom: 1px solid transparent;
-      &:active {
-        border-color: gray;
-      }
+
       &:focus {
         box-shadow: none;
+      }
+      &:not(:disabled){
+        border-bottom: 1px solid ;
       }
     }
   }

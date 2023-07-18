@@ -11,7 +11,7 @@ export default function UsersRender({ data, refreshMainList, setData }) {
   const [token] = useToken();
   const [searchKey, setSearchKey] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const [addNewUser, showPinflAdd] = useReducer((modal) => !modal, false);
+  const [addNewUser, showUserAdd] = useReducer((modal) => !modal, false);
 
   if (data)
     return (
@@ -20,7 +20,7 @@ export default function UsersRender({ data, refreshMainList, setData }) {
 
         {addNewUser && (
           <AddNewUser
-            showPinflAdd={showPinflAdd}
+          showUserAdd={showUserAdd}
             refreshMainList={refreshMainList}
           />
         )}
@@ -47,16 +47,18 @@ export default function UsersRender({ data, refreshMainList, setData }) {
                       setLoading(true);
                       try {
                         const res = await axios.get(
-                          "http://192.168.14.155:9091/pinfl/search/",
+                          process.env.REACT_APP_PROXY2+ "/api/admin/users-search",
                           {
                             headers: { Authorization: `Bearer ${token}` },
                             params: {
-                              searchValue: searchKey,
-                              size: 18,
+                              search:searchKey,
                               page: 0,
+                              size: 18
                             },
                           }
                         );
+                        console.log("RESPONSE FULL");
+                        console.log(res);
                         if (res.data) {
                           console.log(res.data);
                           setData(res.data);
@@ -95,7 +97,7 @@ export default function UsersRender({ data, refreshMainList, setData }) {
                 <button className='relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'>
                   <span
                     className='relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2'
-                    onClick={showPinflAdd}>
+                    onClick={showUserAdd}>
                     <div>
                       <ImAddressBook style={{ width: "10px" }} />
                     </div>
@@ -133,8 +135,13 @@ export default function UsersRender({ data, refreshMainList, setData }) {
                     </th>
                     <th
                       scope='col'
+                      className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
+                      Validated
+                    </th>
+                    <th
+                      scope='col'
                       className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
-                      Promote
+                      Edit
                     </th>
                     <th
                       scope='col'

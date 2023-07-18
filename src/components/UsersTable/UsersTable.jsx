@@ -1,16 +1,20 @@
 import { useReducer, useState } from "react";
 import useToken from "../../auth/useToken";
 import LoanPanel from "../LoanPanel/LoanPanel";
+import EditUser from "../EditUser/EditUser";
+import "./UsersTable.scss"
 import Loading from "../Loading";
 import axios from "axios";
 
 const UsersTable = ({ data, refreshMainList }) => {
   const [token] = useToken();
   const [isLoading, setIsLoading] = useState(false);
+  const [showEdit,setShowEdit]=useReducer((editPanel)=>!editPanel,false)
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
   console.log(data);
   return (
     <>
+    {showEdit && <EditUser showUserEdit={setShowEdit} refreshMainList={refreshMainList} data={data}/>}
       {isLoading && <Loading />}
       {modalPage && (
         <LoanPanel
@@ -31,23 +35,29 @@ const UsersTable = ({ data, refreshMainList }) => {
         <td className='px-6 py-4 text-sm text-gray-800 whitespace-nowrap'>
           {data.username}
         </td>
-        <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
-          <a
-            className='text-green-500 hover:text-green-700'
-            href='#'
-            onClick={showModalPage}>
-            Change role
-          </a>
+        <td className='px-6 py-4 text-sm text-gray-800 whitespace-nowrap'>
+          {data.enabled?<p className=" text-green-800">Yes</p>:<p className=" text-red-800">No</p>}
         </td>
         <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
-          <a
+          <input
+          type="button"
+            className='text-green-500 hover:text-green-700'
+            href='#'
+            onClick={setShowEdit}
+            value="Change profile"
+            disabled={data.deleted}
+            />
+        </td>
+        <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
+          <input
+          type="button"
             className='text-red-500 hover:text-red-700'
             href='#'
             onClick={async () => {
               setIsLoading(true);
               try {
                 const response = await axios.delete(
-                  process.env.REACT_APP_PROXY2 + "/api/auth/delete" + data.id,
+                  process.env.REACT_APP_PROXY2 + "/api/admin/delete-user/" + data.id,
                   {
                     headers: { Authorization: `Bearer ${token}` },
                   }
@@ -59,9 +69,10 @@ const UsersTable = ({ data, refreshMainList }) => {
                 setIsLoading(false);
                 console.log(e);
               }
-            }}>
-            Delete
-          </a>
+            }}
+            disabled={data.deleted}
+            value={"Delete"}
+            />
         </td>
         {/* <td onClick={setIsCollapsed}>
           <RiArrowDropDownLine style={{ fontSize: "30px" }} />
