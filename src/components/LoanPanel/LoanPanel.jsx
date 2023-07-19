@@ -2,19 +2,19 @@ import "./LoanPanel.scss";
 import { useState, useEffect, useReducer, useRef } from "react";
 import axios from "axios";
 import useToken from "../../auth/useToken";
+import useUser from "../../auth/useUser";
 import SubmitLoan from "../SumitLoan/SubmitLoan";
 import Loan from "../Loan/Loan";
 
 const LoanPanel = ({ data, showModal }) => {
   const divRef = useRef(null);
+  const userInfo=useUser()
   const [loanInfo, setLoanInfo] = useState();
   const [isRefresh, setRefresh] = useReducer((a) => !a, false);
   const [openCreate, toggleCreate] = useReducer((a) => !a, false);
   const [token] = useToken();
   useEffect(() => {
     async function loadArticle() {
-      // const response = await axios.get(`http://192.168.219.208:8080/pinfl/`);
-
       try {
         const response = await axios.get(
           process.env.REACT_APP_PROXY + "/loans/pinfl/" + data.id,
@@ -86,13 +86,15 @@ const LoanPanel = ({ data, showModal }) => {
             <hr />
             <p className='flex justify-end'>
               <a href='#submitLoan'>
+                {userInfo.realm_access.roles.includes("ROLE_USER_CREATE_FILE") &&
                 <button
-                  className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
-                  onClick={() => {
-                    toggleCreate();
-                  }}>
+                className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
+                onClick={() => {
+                  toggleCreate();
+                }}>
                   CREATE
                 </button>
+              }
               </a>
               <button
                 className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'

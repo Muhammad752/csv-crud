@@ -6,8 +6,10 @@ import axios from "axios";
 import UsersTable from "../UsersTable/UsersTable";
 import Loading from "../Loading";
 import useToken from "../../auth/useToken";
+import useUser from "../../auth/useUser";
 import AddNewUser from "../AddNewUser/AddNewUser";
 export default function UsersRender({ data, refreshMainList, setData }) {
+  const userInfo=useUser()
   const [token] = useToken();
   const [searchKey, setSearchKey] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -94,6 +96,8 @@ export default function UsersRender({ data, refreshMainList, setData }) {
 
             <div className='flex items-center space-x-2'>
               <div className='relative gap-4 flex'>
+              {userInfo.realm_access.roles.includes("ROLE_ADMIN_CREATE_USER")
+          &&
                 <button className='relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'>
                   <span
                     className='relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2'
@@ -104,6 +108,7 @@ export default function UsersRender({ data, refreshMainList, setData }) {
                     <div className='hidden sm:block'>Add new user</div>
                   </span>
                 </button>
+}
               </div>
             </div>
           </div>
@@ -138,16 +143,22 @@ export default function UsersRender({ data, refreshMainList, setData }) {
                       className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
                       Validated
                     </th>
+                    {userInfo.realm_access.roles.includes("ROLE_ADMIN_READ_USER")
+          &&
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
                       Edit
                     </th>
+}
+                    {userInfo.realm_access.roles.includes("ROLE_ADMIN_DELETE_USER")
+          &&
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
                       Delete
                     </th>
+}
                     <th></th>
                   </tr>
                 </thead>

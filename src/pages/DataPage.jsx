@@ -46,6 +46,7 @@ export default function DataPage() {
             process.env.REACT_APP_PROXY + "/api/auth/delete"
           );
           console.log(res);
+          localStorage.removeItem("ipoteka_refresh_token");
           localStorage.removeItem("ipoteka_token");
         } catch (e) {
           alert(e.message);
@@ -58,6 +59,7 @@ export default function DataPage() {
       href: "/",
       onclick: () => {
         localStorage.removeItem("ipoteka_token");
+        localStorage.removeItem("ipoteka_refresh_token");
       },
     },
   ];
@@ -77,7 +79,7 @@ export default function DataPage() {
             headers: { Authorization: `Bearer ${token}` },
             params: {
               page: pageNum,
-              size: 18,
+              size: 12,
             },
           }
         );
@@ -129,8 +131,8 @@ export default function DataPage() {
                               className={classNames(
                                 item.current
                                   ? "bg-white text-green-700"
-                                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                                "rounded-md px-3 py-2 text-sm font-medium"
+                                  : "text-gray-300  hover:text-white",
+                                "rounded-md px-3 py-2 text-sm font-medium "
                               )}
                               aria-current={item.current ? "page" : undefined}>
                               {item.name}

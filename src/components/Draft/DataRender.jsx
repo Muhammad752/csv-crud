@@ -7,10 +7,12 @@ import TableRow from "./TableRow";
 import Loading from "../Loading";
 import useToken from "../../auth/useToken";
 import AddPinflModal from "../AddPinflModal/AddPinflModal";
+import useUser from "../../auth/useUser";
 import "./DataReneder.scss";
 
 export default function DataRender({ data, refreshMainList, setData }) {
   const [token] = useToken();
+  const userInfo=useUser();
   const [searchKey, setSearchKey] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [addPinflModal, showPinflAdd] = useReducer((modal) => !modal, false);
@@ -53,7 +55,7 @@ export default function DataRender({ data, refreshMainList, setData }) {
                             headers: { Authorization: `Bearer ${token}` },
                             params: {
                               searchValue: searchKey,
-                              size: 18,
+                              size: 12,
                               page: 0,
                             },
                           }
@@ -93,6 +95,8 @@ export default function DataRender({ data, refreshMainList, setData }) {
 
             <div className='flex items-center space-x-2'>
               <div className='relative gap-4 flex'>
+              {userInfo.realm_access.roles.includes("ROLE_USER_CREATE_FILE")
+          &&
                 <button
                   className='relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'
                   onClick={showPinflAdd}>
@@ -103,6 +107,11 @@ export default function DataRender({ data, refreshMainList, setData }) {
                     <div className='hidden sm:block'>Add pinfl</div>
                   </span>
                 </button>
+}
+
+
+{userInfo.realm_access.roles.includes("ROLE_USER_READ_FILE")
+          &&
                 <button className='download_csv_button relative z-0 inline-flex text-sm rounded-md shadow-sm focus:ring-accent-500 focus:border-accent-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1'>
                   <span className='relative inline-flex items-center px-3 py-3 space-x-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md sm:py-2'>
                     <div>
@@ -148,6 +157,7 @@ export default function DataRender({ data, refreshMainList, setData }) {
                     </div>
                   </span>
                 </button>
+}
               </div>
             </div>
           </div>
@@ -172,16 +182,22 @@ export default function DataRender({ data, refreshMainList, setData }) {
                       className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
                       Pinfl
                     </th>
+                    {userInfo.realm_access.roles.includes("ROLE_USER_READ_FILE")
+          &&
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
                       Edit
                     </th>
+}
+{userInfo.realm_access.roles.includes("ROLE_USER_DELETE_FILE")
+          &&
                     <th
                       scope='col'
                       className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
                       Delete
                     </th>
+}
                     <th></th>
                   </tr>
                 </thead>

@@ -1,9 +1,11 @@
 import { useReducer, useState } from "react";
 import useToken from "../../auth/useToken";
+import useUser from "../../auth/useUser";
 import "./Loan.scss";
 import axios from "axios";
 
 const Loan = ({ data, value, setRefresh }) => {
+  const userInfo=useUser();
   const [token] = useToken();
   const [editable, setEditable] = useReducer((a) => !a, false);
   const emptySingleLoan = {
@@ -132,12 +134,15 @@ const Loan = ({ data, value, setRefresh }) => {
             </button>
           </>
         ) : (
+        userInfo.realm_access.roles.includes("ROLE_USER_UPDATE_FILE") &&
           <button
             className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
             onClick={setEditable}>
             EDIT
           </button>
         )}
+        {
+        userInfo.realm_access.roles.includes("ROLE_USER_DELETE_FILE") &&
         <button
           className='mt-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
           onClick={async () => {
@@ -151,6 +156,7 @@ const Loan = ({ data, value, setRefresh }) => {
           }}>
           Delete
         </button>
+}
       </p>
     </div>
   );

@@ -73,8 +73,9 @@ export default function Pagination({
                   key={ind}
                     className='relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0 cursor-pointer'
                     onClick={() => {
-                      if(Number(pageNum)>val+1){
+                      if(Number(pageNum)<val){
                         setPageNum(Number(pageNum) + 2);
+                        console.log("bigger");
                       }
                       else{
                         console.log("smaller");
@@ -82,7 +83,7 @@ export default function Pagination({
                       }
                       refreshMainList();
                     }}>
-                    ...
+                      ...
                   </span>
                 );
               } else {

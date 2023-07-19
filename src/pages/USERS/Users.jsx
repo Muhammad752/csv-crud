@@ -33,17 +33,19 @@ export default function Users() {
   ];
   const userNavigation = [
     { name: "Your Profile", href: "#", onclick: () => showUser() },
-    { name: "Settings", href: "#" },
+    // { name: "Settings", href: "#" },
     {
       name: "Delete account",
       href: "#",
       onclick: async () => {
         try {
           const res = await axios.delete(
-            process.env.REACT_APP_PROXY + "/api/auth/delete"
+            process.env.REACT_APP_PROXY2 + "/api/auth/delete",{
+              headers: { Authorization: `Bearer ${token}` }}
           );
           console.log(res);
           localStorage.removeItem("ipoteka_token");
+          localStorage.removeItem("ipoteka_refresh_token");
         } catch (e) {
           alert(e.message);
           console.log(e.message);
@@ -55,6 +57,7 @@ export default function Users() {
       href: "/",
       onclick: () => {
         localStorage.removeItem("ipoteka_token");
+        localStorage.removeItem("ipoteka_refresh_token");
       },
     },
   ];
@@ -74,7 +77,7 @@ export default function Users() {
             headers: { Authorization: `Bearer ${token}` },
             params: {
               page: pageNum,
-              size: 18,
+              size: 10,
             },
           }
         );
@@ -126,8 +129,8 @@ export default function Users() {
                               className={classNames(
                                 item.current
                                   ? "bg-white text-green-700"
-                                  : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                                "rounded-md px-3 py-2 text-sm font-medium"
+                                  : "text-gray-300  hover:text-white",
+                                "rounded-md px-3 py-2 text-sm font-medium "
                               )}
                               aria-current={item.current ? "page" : undefined}>
                               {item.name}

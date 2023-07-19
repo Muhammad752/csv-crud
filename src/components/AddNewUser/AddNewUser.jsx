@@ -2,6 +2,7 @@ import axios from "axios";
 import "./AddNewUser.scss";
 import { useState } from "react";
 import useToken from "../../auth/useToken";
+import CustomAlert from "../CustomAlert/CustomAlert";
 
 
 const AddNewUser = ({ showUserAdd, refreshMainList }) => {
@@ -23,10 +24,18 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
     firstName:"",
     lastName:"",
     phoneNumber:"",
-    password:"",
     roles:[]
   })
+  const emptyErrors={
+    email:"",
+firstName:"",
+lastName:"",
+password:"",
+phoneNumber:""
+  }
+  const [signAlert, setAlert] = useState({ type: "", value: "" });
   const [token] = useToken();
+  const [errors,setErrors]=useState(emptyErrors)
   const emptyUser = {
     email: "",
     password: "",
@@ -44,6 +53,13 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
           showUserAdd();
         }
       }}>
+        {signAlert.type && (
+        <CustomAlert
+          type={signAlert.type}
+          content={signAlert.value}
+          setAlert={setAlert}
+        />
+      )}
       <div className='addUser__panel  w-11/12 md:w-1/3 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between'>
         <div>
           <div className='w-full flex flex-row mb-12 justify-between'>
@@ -67,6 +83,7 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   })
                 }
               />
+              <p className="text-red-500 text-sm mt-2">{errors.firstName}</p>
             </div>
             <div>
               <label>Last name: </label>
@@ -80,6 +97,8 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   })
                 }
               />
+              
+              <p className="text-red-500 text-sm mt-2">{errors.lastName}</p>
             </div>
             <div>
               <label>Phone number: </label>
@@ -93,6 +112,8 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   })
                 }
               />
+              
+              <p className="text-red-500 text-sm mt-2">{errors.phoneNumber}</p>
             </div>
             <div>
               <label>Password: </label>
@@ -106,6 +127,7 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   })
                 }
               />
+              <p className="text-red-500 text-sm mt-2">{errors.password}</p>
             </div>
             <div>
               <label>Email: </label>
@@ -119,6 +141,8 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   })
                 }
               />
+              
+              <p className="text-red-500 text-sm mt-2">{errors.email}</p>
             </div>
             <div>
 
@@ -230,6 +254,7 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   }
                 };
                 console.log(rolesArr);
+                console.log(userData);
                 try {
                   const res = await axios.post(
                     process.env.REACT_APP_PROXY2 + "/api/admin/create-user",
@@ -240,10 +265,32 @@ const AddNewUser = ({ showUserAdd, refreshMainList }) => {
                   );
                   console.log(res);
                   refreshMainList();
+                  showUserAdd()
+                  setAlert({
+                    type: "success",
+                    value: "New user has been added",
+                  });
                 } catch (e) {
-                  console.log(e.meassage);
-                }
-                showUserAdd();
+                  if(e.response){
+
+                    if(e.response.status===409){
+                      setAlert({
+                        type: "error",
+                        value: e.response.data.errorMessage,
+                      });
+                    }
+                    console.log(e);
+                    console.log();
+                    setErrors({...emptyErrors,...e.response.data.errors})
+                  }else{
+                    setAlert({
+                      type: "error",
+                      value: "Check network connection",
+                    });
+                  }
+                    
+                  }
+                // showUserAdd();
               }}>
               CREATE
             </button>

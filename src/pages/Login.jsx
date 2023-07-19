@@ -163,10 +163,19 @@ export default function Login({ user }) {
                       setLoginError("User credentials not found");
                     else {
                       console.log(e.response);
-                      setAlert({
-                        type: "error",
-                        value: " Check netw",
-                      });
+                      if(e.response){
+                        setAlert({
+                          type: "error",
+                          value: " User not found, activate in telegram bot",
+                        });
+                      }
+                      else{
+                        setAlert({
+                          type: "error",
+                          value: "Check network connections",
+                        });
+
+                      }
                     }
                     console.log(e.message);
                   }

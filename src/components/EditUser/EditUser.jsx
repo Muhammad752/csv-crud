@@ -2,13 +2,17 @@ import axios from "axios";
 import "./EditUser.scss";
 import { useEffect, useState } from "react";
 import useToken from "../../auth/useToken";
+import useUser from "../../auth/useUser";
 import useRefreshToken from "../../auth/useRefreshToken";
+import CustomAlert from "../CustomAlert/CustomAlert";
 import Loading from "../Loading";
 
 
 const EditUser = ({ showUserEdit, refreshMainList,data }) => {
   const [refreshToken,setRefreshToken]=useRefreshToken()
+  const [signAlert, setAlert] = useState({ type: "", value: "" });
   const [isLoading,setIsLoading]=useState(false)
+  const userInfo=useUser()
   let emptyRoles={
 "ROLE_USER":false,
     "ROLE_USER_READ_FILE":false,
@@ -26,6 +30,12 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
   })
   const [roles,setRoles]=useState(emptyRoles)
   const [token,setToken] = useToken();
+  const emptyErrors={
+    email: "",
+firstName:"" ,
+lastName: ""
+  }
+  const [errors,setErrors]=useState(emptyErrors)
   const initialUser = {
     email: data.email,
     firstName: data.firstName,
@@ -42,6 +52,13 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
         }
       }}>
         {isLoading && <Loading/>}
+        {signAlert.type && (
+        <CustomAlert
+          type={signAlert.type}
+          content={signAlert.value}
+          setAlert={setAlert}
+        />
+      )}
       <div className='addUser__panel  w-11/12 md:w-1/3 p-5 bg-white rounded-md overflow-auto flex flex-col justify-between'>
         <div>
           <div className='w-full flex flex-row mb-12 justify-between'>
@@ -65,6 +82,7 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
                   })
                 }
               />
+              <p className="text-red-500 text-sm mt-2">{errors.firstName}</p>
             </div>
             <div>
               <label>Last name: </label>
@@ -78,6 +96,8 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
                   })
                 }
               />
+              
+              <p className="text-red-500 text-sm mt-2">{errors.lastName}</p>
             </div>
             <div>
               <label>Email: </label>
@@ -91,6 +111,8 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
                   })
                 }
               />
+              
+              <p className="text-red-500 text-sm mt-2">{errors.email}</p>
             </div>
             <div>
 
@@ -191,6 +213,8 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
         <footer className=''>
           <hr />
           <p className='flex justify-end'>
+          {userInfo.realm_access.roles.includes("ROLE_ADMIN_UPDATE_USER")
+          &&
             <button
               className=' mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded'
               onClick={async (ev) => {
@@ -209,14 +233,22 @@ const EditUser = ({ showUserEdit, refreshMainList,data }) => {
                     }
                   );
                   refreshMainList();
+                  showUserEdit();
+                  setAlert({
+                    type: "success",
+                    value: "User details has been changed",
+                  });
                 } catch (e) {
-                  console.log({...userData,roles:rolesArr});
-                  console.log(e);
+                  if(e.response){
+
+                    setErrors({...emptyErrors,...e.response.data.errors})
+                    console.log(e);
+                  }
                 }
-                showUserEdit();
               }}>
               SUBMIT
             </button>
+} 
             <button
               className='mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded'
               onClick={showUserEdit}>

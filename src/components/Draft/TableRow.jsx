@@ -2,10 +2,12 @@ import { useReducer, useState } from "react";
 import useToken from "../../auth/useToken";
 import LoanPanel from "../LoanPanel/LoanPanel";
 import Loading from "../Loading";
+import useUser from "../../auth/useUser";
 import axios from "axios";
 
 const TableRow = ({ data, refreshMainList }) => {
   const [token] = useToken();
+  const userInfo=useUser()
   const [isLoading, setIsLoading] = useState(false);
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
   return (
@@ -28,14 +30,20 @@ const TableRow = ({ data, refreshMainList }) => {
         <td className='px-6 py-4 text-sm text-gray-800 whitespace-nowrap'>
           {data.pinflValue}
         </td>
+          {userInfo.realm_access.roles.includes("ROLE_USER_READ_FILE")
+          &&
         <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
-          <a
-            className='text-green-500 hover:text-green-700'
-            href='#'
-            onClick={showModalPage}>
-            Preview
-          </a>
+          <input
+          type="button"
+          className='text-green-500 hover:text-green-700 cursor-pointer'
+          href='#'
+          onClick={showModalPage}
+          value={"Preview"}
+          />
         </td>
+        }
+        {userInfo.realm_access.roles.includes("ROLE_USER_DELETE_FILE")
+          &&
         <td className='px-6 py-4 text-sm font-medium text-right whitespace-nowrap'>
           <a
             className='text-red-500 hover:text-red-700'
@@ -60,6 +68,7 @@ const TableRow = ({ data, refreshMainList }) => {
             Delete
           </a>
         </td>
+}
         {/* <td onClick={setIsCollapsed}>
           <RiArrowDropDownLine style={{ fontSize: "30px" }} />
         </td> */}

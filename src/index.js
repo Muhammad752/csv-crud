@@ -7,7 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <div className='container m-auto relative bg-white shadow-lg h-screen overflow-auto'>
+    <div className='container m-auto relative bg-white shadow-lg h-screen overflow-auto w-4/5'>
       <App />
     </div>
   </React.StrictMode>
