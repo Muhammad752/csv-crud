@@ -10,10 +10,9 @@ import AddPinflModal from "../AddPinflModal/AddPinflModal";
 import useUser from "../../auth/useUser";
 import "./DataReneder.scss";
 
-export default function DataRender({ data, refreshMainList, setData }) {
+export default function DataRender({ data, refreshMainList, setData,searchKey,setSearchKey,makeSearch,setMakeSearch,setPageNum }) {
   const [token] = useToken();
   const userInfo=useUser();
-  const [searchKey, setSearchKey] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [addPinflModal, showPinflAdd] = useReducer((modal) => !modal, false);
 
@@ -42,39 +41,51 @@ export default function DataRender({ data, refreshMainList, setData }) {
                   class='absolute inset-y-0 right-0 flex items-center px-4 text-gray-700 bg-gray-100 border border-gray-300 rounded-r-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                   onChange={() => {
                     if (!searchKey) {
+                      setMakeSearch({
+                        searchUrl:"",
+                        searchData:""
+                      })
                       refreshMainList();
                     }
                   }}
-                  onClick={async () => {
+                  onClick={ () => {
                     if (searchKey) {
                       setLoading(true);
                       try {
-                        const res = await axios.get(
-                          process.env.REACT_APP_PROXY+ "/pinfl/search/",
-                          {
-                            headers: { Authorization: `Bearer ${token}` },
-                            params: {
-                              searchValue: searchKey,
-                              size: 12,
-                              page: 0,
-                            },
-                          }
-                        );
-                        if (res.data) {
-                          console.log(res.data);
-                          setData(res.data);
-                          console.log("Search data");
-                          console.log(data);
-                        }
+                        setMakeSearch({
+                          searchUrl:"search/",
+                          searchData:searchKey
+                        })
+                        setPageNum(0)
+                        refreshMainList()
+                        // const res = await axios.get(
+                        //   process.env.REACT_APP_PROXY+ "/pinfl/search/",
+                        //   {
+                        //     headers: { Authorization: `Bearer ${token}` },
+                        //     params: {
+                        //       searchValue: searchKey,
+                        //       size: 12,
+                        //       page: 0,
+                        //     },
+                        //   }
+                        // );
+                        // if (res.data) {
+                        //   console.log(res.data);
+                        //   setData(res.data);
+                        //   console.log("Search data");
+                        //   console.log(data);
+                        // }
                       } catch (e) {
-                        if (e.response) {
-                          console.log(e.response);
-                        }
+                       
                         console.log(e);
                         setLoading(false);
                       }
                       setLoading(false);
                     } else {
+                      setMakeSearch({
+                        searchUrl:"",
+                        searchData:""
+                      })
                       refreshMainList();
                     }
                   }}>

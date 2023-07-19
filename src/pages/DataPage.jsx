@@ -19,8 +19,14 @@ export default function DataPage() {
   console.log("My user");
   console.log(user);
   const [data, setData] = useState();
+  
+  const [searchKey, setSearchKey] = useState("");
   const [mainListRefresh, refreshMainList] = useReducer((a) => !a, false);
   const [pageNum, setPageNum] = useState(0);
+  const [makeSearch,setMakeSearch]=useState({
+    searchUrl:"",
+    searchData:""
+  })
   const [userProfile, showUser] = useReducer(function (a) {
     return !a;
   }, false);
@@ -74,12 +80,13 @@ export default function DataPage() {
         // const response = await axios.get(`/offlineData.json`);
         setIsLoading(true);
         const response = await axios.get(
-          process.env.REACT_APP_PROXY + `/pinfl/`,
+          process.env.REACT_APP_PROXY + `/pinfl/`+makeSearch.searchUrl,
           {
             headers: { Authorization: `Bearer ${token}` },
             params: {
               page: pageNum,
               size: 12,
+              searchValue:makeSearch.searchData
             },
           }
         );
@@ -290,13 +297,19 @@ export default function DataPage() {
             <div className='mx-auto py-6 sm:px-6 lg:px-8 '>
               {data &&
                 (isLoading ? (
-                  <Loading />
+                  // <Loading />
+                  <></>
                 ) : (
                   <>
                     <DataRender
                       data={data.content}
                       refreshMainList={refreshMainList}
                       setData={setData}
+                      searchKey={searchKey}
+                      setSearchKey={setSearchKey}
+                      makeSearch={makeSearch}
+                      setMakeSearch={setMakeSearch}
+                      setPageNum={setPageNum}
                     />
                     {/* <DataPageOption
                     data={data.content}
