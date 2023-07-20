@@ -21,8 +21,9 @@ const useUser = () => {
       setUser(getPayload(token));
     }
   }, [token]);
-
+if(user)
   return user;
+  console.log("Not connected");
 };
 
 export default useUser;

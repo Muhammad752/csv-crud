@@ -7,6 +7,7 @@ import useUser from "../auth/useUser";
 import useToken from "../auth/useToken";
 import DataPageOption from "../components/DataPageOption";
 import "./MainPages.scss";
+import { useSearchParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import DataRender from "../components/Draft/DataRender";
 import UserProfile from "../components/UserProfile/UserProfile";
@@ -22,7 +23,16 @@ export default function DataPage() {
   
   const [searchKey, setSearchKey] = useState("");
   const [mainListRefresh, refreshMainList] = useReducer((a) => !a, false);
-  const [pageNum, setPageNum] = useState(0);
+
+  const [searchParams,setSearchParams]=useSearchParams({
+    pageNum:0
+  })
+  let pageNum=searchParams.get("pageNum")
+  const setPageNum=(num)=>{
+    setSearchParams({
+      pageNum:Number(num)
+    })
+  }
   const [makeSearch,setMakeSearch]=useState({
     searchUrl:"",
     searchData:""
@@ -42,7 +52,6 @@ export default function DataPage() {
   ];
   const userNavigation = [
     { name: "Your Profile", href: "#", onclick: () => showUser() },
-    { name: "Settings", href: "#" },
     {
       name: "Delete account",
       href: "#",
@@ -75,9 +84,11 @@ export default function DataPage() {
   }
 
   useEffect(() => {
+    pageNum=searchParams.get("pageNum")
     async function loadArticle() {
       try {
         // const response = await axios.get(`/offlineData.json`);
+        console.log("Page numbers is: "+pageNum);
         setIsLoading(true);
         const response = await axios.get(
           process.env.REACT_APP_PROXY + `/pinfl/`+makeSearch.searchUrl,
@@ -93,6 +104,7 @@ export default function DataPage() {
         const newArticle = response.data;
         if (newArticle) {
           setData(newArticle);
+          pageNum=searchParams.get("pageNum")
         }
         setIsLoading(false);
       } catch (e) {
@@ -107,7 +119,6 @@ export default function DataPage() {
     console.log("DATA IS=");
     console.log(data);
   }
-  if (data)
     return (
       <>
         {userProfile && <UserProfile showUser={showUser} />}
@@ -295,11 +306,7 @@ export default function DataPage() {
           </header>
           <main>
             <div className='mx-auto py-6 sm:px-6 lg:px-8 '>
-              {data &&
-                (isLoading ? (
-                  // <Loading />
-                  <></>
-                ) : (
+              {data && 
                   <>
                     <DataRender
                       data={data.content}
@@ -315,14 +322,14 @@ export default function DataPage() {
                     data={data.content}
                     refreshMainList={refreshMainList}
                   /> */}
-                  </>
-                ))}
               <Pagination
-                data={data}
-                refreshMainList={refreshMainList}
-                setPageNum={setPageNum}
-                pageNum={pageNum}
+              data={data}
+              refreshMainList={refreshMainList}
+              setPageNum={setPageNum}
+              pageNum={pageNum}
               />
+              </>
+            }
             </div>
           </main>
         </div>

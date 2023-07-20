@@ -9,6 +9,7 @@ import useToken from "../../auth/useToken";
 import AddPinflModal from "../AddPinflModal/AddPinflModal";
 import useUser from "../../auth/useUser";
 import "./DataReneder.scss";
+import DataTable from "../DataTable/DataTable";
 
 export default function DataRender({ data, refreshMainList, setData,searchKey,setSearchKey,makeSearch,setMakeSearch,setPageNum }) {
   const [token] = useToken();
@@ -16,7 +17,6 @@ export default function DataRender({ data, refreshMainList, setData,searchKey,se
   const [isLoading, setLoading] = useState(false);
   const [addPinflModal, showPinflAdd] = useReducer((modal) => !modal, false);
 
-  if (data)
     return (
       <div className='flex flex-col max-w-[80%] m-auto'>
         {isLoading && <Loading />}
@@ -175,53 +175,7 @@ export default function DataRender({ data, refreshMainList, setData,searchKey,se
 
           <div className='p-1.5 w-full inline-block align-middle'>
             <div className='overflow-auto border rounded-lg'>
-              <table className='min-w-full divide-y divide-gray-200'>
-                <thead className='bg-gray-50'>
-                  <tr>
-                    <th
-                      scope='col'
-                      className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
-                      №
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
-                      Branch Info
-                    </th>
-                    <th
-                      scope='col'
-                      className='px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase '>
-                      Pinfl
-                    </th>
-                    {userInfo.realm_access.roles.includes("ROLE_USER_READ_FILE")
-          &&
-                    <th
-                      scope='col'
-                      className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
-                      Edit
-                    </th>
-}
-{userInfo.realm_access.roles.includes("ROLE_USER_DELETE_FILE")
-          &&
-                    <th
-                      scope='col'
-                      className='px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase '>
-                      Delete
-                    </th>
-}
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody className='divide-y divide-gray-200'>
-                  {console.log(data)}
-                  {data.map((row) => (
-                    <TableRow
-                      data={row}
-                      refreshMainList={refreshMainList}
-                    />
-                  ))}
-                </tbody>
-              </table>
+              <DataTable data={data} refreshMainList={refreshMainList}/>
             </div>
           </div>
         </div>
