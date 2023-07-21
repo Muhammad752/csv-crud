@@ -10,6 +10,7 @@ import Pagination from "../../components/Pagination";
 import UsersRender from "../../components/UsersRender/UsersRender";
 import UserProfile from "../../components/UserProfile/UserProfile";
 import Loading from "../../components/Loading";
+import {Link} from "react-router-dom"
 
 export default function Users() {
   const user = useUser();
@@ -123,9 +124,9 @@ export default function Users() {
                       <div className='hidden md:block'>
                         <div className='ml-10 flex items-baseline space-x-4'>
                           {navigation.map((item) => (
-                            <a
+                            <Link
                               key={item.name}
-                              href={item.href}
+                              to={item.href}
                               className={classNames(
                                 item.current
                                   ? "bg-white text-green-700"
@@ -134,7 +135,7 @@ export default function Users() {
                               )}
                               aria-current={item.current ? "page" : undefined}>
                               {item.name}
-                            </a>
+                            </Link>
                           ))}
                         </div>
                       </div>

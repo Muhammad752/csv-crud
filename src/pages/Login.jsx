@@ -35,6 +35,7 @@ export default function Login({ user }) {
   //   console.log(res);
   // }
   // getPut();
+  
   if (user)
     return (
       <Navigate
