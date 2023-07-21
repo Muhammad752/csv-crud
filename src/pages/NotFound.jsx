@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 export default function NotFound() {
   return (
@@ -7,7 +7,7 @@ export default function NotFound() {
         <div className="text-center">
           <h1
             className="font-semibold text-indigo-600 text-9xl"
-            style={{ fontSize: "180px" }}
+            style={{ fontSize: '180px' }}
           >
             404
           </h1>

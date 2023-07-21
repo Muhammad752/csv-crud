@@ -1,5 +1,5 @@
-import { Navigate, Outlet } from "react-router-dom";
-import useUser from "./useUser";
+import { Navigate, Outlet } from 'react-router-dom';
+import useUser from './useUser';
 
 const Protector = ({ user, children }) => {
   console.log(user);
