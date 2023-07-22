@@ -1,13 +1,19 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import useUser from './useUser';
+import Headers from '../components/Headers/Headers';
 
-const Protector = ({ user, children }) => {
-  console.log(user);
-  // const user = useUser();
-  if (!user) {
+const Protector = (props) => {
+  if (!props.user) {
     return <Navigate to="/" replace />;
   }
-  return children ? children : <Outlet />;
+  console.log('from protector');
+  console.log(props.location);
+  return (
+    <>
+      {/* <Headers /> */}
+      {props.children ? props.children : <Outlet />}
+    </>
+  );
 };
 
 export default Protector;

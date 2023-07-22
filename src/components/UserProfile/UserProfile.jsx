@@ -1,9 +1,9 @@
-import './UserProfile.scss';
 import useUser from '../../auth/useUser';
 import { useEffect, useReducer, useState } from 'react';
 import useToken from '../../auth/useToken';
 import useRefreshToken from '../../auth/useRefreshToken';
 import axios from 'axios';
+import './UserProfile.scss';
 
 const UserProfile = ({ showUser }) => {
   const [token, setToken] = useToken();

@@ -1,14 +1,12 @@
-import './App.css';
-import Login from './pages/Login';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import DataPage from './pages/DataPage';
 import SignUpPage from './pages/SignUpPage';
 import Protector from './auth/Protector';
 import NotFound from './pages/NotFound';
-import SingUpAlterNate from './pages/SignUpAlternate';
-import useUser from './auth/useUser';
+import DataPage from './pages/DataPage';
 import Users from './pages/USERS/Users';
-import CheckIfWorks from './pages/Check';
+import useUser from './auth/useUser';
+import Login from './pages/Login';
+import './App.css';
 
 function App() {
   /*--------------------
@@ -32,7 +30,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route index element={<Login user={user} />} />
-        <Route path="sign" element={<SingUpAlterNate />} />
         <Route element={<Protector user={user} />}>
           <Route path="/dataPage" element={<DataPage />} />
           <Route path="/users" element={<Users user={user} />} />

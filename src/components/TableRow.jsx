@@ -1,8 +1,8 @@
 import { useReducer, useState } from 'react';
-import useToken from '../../auth/useToken';
-import LoanPanel from '../LoanPanel/LoanPanel';
-import Loading from '../Loading';
-import useUser from '../../auth/useUser';
+import useToken from '../auth/useToken';
+import LoanPanel from './LoanPanel/LoanPanel';
+import Loading from './Loading';
+import useUser from '../auth/useUser';
 import axios from 'axios';
 
 const TableRow = ({ data, refreshMainList }) => {
@@ -12,7 +12,7 @@ const TableRow = ({ data, refreshMainList }) => {
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
   return (
     <>
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />} */}
       {modalPage && <LoanPanel data={data} showModal={showModalPage} />}
       <tr>
         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">

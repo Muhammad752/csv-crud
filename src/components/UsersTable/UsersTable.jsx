@@ -13,7 +13,7 @@ const UsersTable = ({ data, refreshMainList }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showEdit, setShowEdit] = useReducer((editPanel) => !editPanel, false);
   const [modalPage, showModalPage] = useReducer((modal) => !modal, false);
-  console.log(data);
+
   return (
     <>
       {showEdit && (
@@ -23,7 +23,7 @@ const UsersTable = ({ data, refreshMainList }) => {
           data={data}
         />
       )}
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />} */}
       {modalPage && <LoanPanel data={data} showModal={showModalPage} />}
       <tr>
         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
@@ -74,12 +74,10 @@ const UsersTable = ({ data, refreshMainList }) => {
                       headers: { Authorization: `Bearer ${token}` },
                     }
                   );
-                  console.log(response);
                   refreshMainList();
                   setIsLoading(false);
                 } catch (e) {
                   setIsLoading(false);
-                  console.log(e);
                 }
               }}
               disabled={data.deleted}

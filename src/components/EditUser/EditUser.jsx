@@ -51,7 +51,7 @@ const EditUser = ({ showUserEdit, refreshMainList, data }) => {
         }
       }}
     >
-      {isLoading && <Loading />}
+      {/* {isLoading && <Loading />} */}
       {signAlert.type && (
         <CustomAlert
           type={signAlert.type}

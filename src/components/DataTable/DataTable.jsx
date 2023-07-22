@@ -1,11 +1,11 @@
 import useUser from '../../auth/useUser';
-import TableRow from '../Draft/TableRow';
+import TableRow from '../TableRow';
 import Loading from '../Loading';
 
 const DataTable = ({ data, refreshMainList }) => {
   const userInfo = useUser();
   if (!data) {
-    return <Loading />;
+    // return <Loading />;
   }
   if (data)
     return (
@@ -50,9 +50,12 @@ const DataTable = ({ data, refreshMainList }) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {console.log(data)}
           {data.map((row) => (
-            <TableRow data={row} refreshMainList={refreshMainList} />
+            <TableRow
+              key={row.id}
+              data={row}
+              refreshMainList={refreshMainList}
+            />
           ))}
         </tbody>
       </table>
