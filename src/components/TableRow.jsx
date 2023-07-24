@@ -42,20 +42,25 @@ const TableRow = ({ data, refreshMainList }) => {
               className="text-red-500 hover:text-red-700"
               href="#"
               onClick={async () => {
-                setIsLoading(true);
-                try {
-                  const response = await axios.delete(
-                    process.env.REACT_APP_PROXY + '/pinfl/' + data.id,
-                    {
-                      headers: { Authorization: `Bearer ${token}` },
-                    }
-                  );
-                  console.log(response);
-                  refreshMainList();
-                  setIsLoading(false);
-                } catch (e) {
-                  setIsLoading(false);
-                  console.log(e);
+                let permit = window.confirm(
+                  'Do you want to delete row with pinfl: ' + data.pinflValue
+                );
+                if (permit) {
+                  setIsLoading(true);
+                  try {
+                    const response = await axios.delete(
+                      process.env.REACT_APP_PROXY + '/pinfl/' + data.id,
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      }
+                    );
+                    console.log(response);
+                    refreshMainList();
+                    setIsLoading(false);
+                  } catch (e) {
+                    setIsLoading(false);
+                    console.log(e);
+                  }
                 }
               }}
             >

@@ -114,39 +114,43 @@ const UserProfile = ({ showUser }) => {
                 </button>
               ) : (
                 <>
-                  <button
-                    className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
-                    onClick={async () => {
-                      const res = await axios.post(
-                        process.env.REACT_APP_PROXY2 + '/api/auth/update',
-                        currentUser,
-                        {
-                          headers: { Authorization: `Bearer ${token}` },
-                        }
-                      );
+                  {userInfo.realm_access.roles.includes(
+                    'ROLE_ADMIN_UPDATE_USER'
+                  ) && (
+                    <button
+                      className=" mt-2 bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded"
+                      onClick={async () => {
+                        const res = await axios.post(
+                          process.env.REACT_APP_PROXY2 + '/api/auth/update',
+                          currentUser,
+                          {
+                            headers: { Authorization: `Bearer ${token}` },
+                          }
+                        );
 
-                      const res2 = await axios.post(
-                        process.env.REACT_APP_PROXY2 +
-                          '/api/auth/refresh/token?refreshTokenRequest=' +
-                          refreshToken,
-                        {
-                          headers: { Authorization: `Bearer ${token}` },
-                        }
-                      );
-                      console.log(res2);
-                      if (res2) {
-                        console.log('response with tokens');
+                        const res2 = await axios.post(
+                          process.env.REACT_APP_PROXY2 +
+                            '/api/auth/refresh/token?refreshTokenRequest=' +
+                            refreshToken,
+                          {
+                            headers: { Authorization: `Bearer ${token}` },
+                          }
+                        );
                         console.log(res2);
-                        const { access_token, refresh_token } = res2.data;
-                        setToken(access_token);
-                        setRefreshToken(refresh_token);
-                      }
-                      console.log(res);
-                      setIsEditable();
-                    }}
-                  >
-                    Upload
-                  </button>
+                        if (res2) {
+                          console.log('response with tokens');
+                          console.log(res2);
+                          const { access_token, refresh_token } = res2.data;
+                          setToken(access_token);
+                          setRefreshToken(refresh_token);
+                        }
+                        console.log(res);
+                        setIsEditable();
+                      }}
+                    >
+                      Upload
+                    </button>
+                  )}
                   <button
                     className="mt-2 ml-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
                     onClick={() => {

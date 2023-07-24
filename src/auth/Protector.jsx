@@ -2,16 +2,15 @@ import { Navigate, Outlet } from 'react-router-dom';
 import useUser from './useUser';
 import Headers from '../components/Headers/Headers';
 
-const Protector = (props) => {
-  if (!props.user) {
+const Protector = ({ user, children }) => {
+  console.log(user);
+  if (!user) {
     return <Navigate to="/" replace />;
   }
-  console.log('from protector');
-  console.log(props.location);
   return (
     <>
-      {/* <Headers /> */}
-      {props.children ? props.children : <Outlet />}
+      <Headers />
+      {children ? children : <Outlet />}
     </>
   );
 };

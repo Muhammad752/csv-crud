@@ -75,40 +75,34 @@ export default function Users() {
       }, 50);
     }
   }
-  if (data)
-    return (
-      <>
-        <div>
-          <Headers current="Users" />
-          {/* {isLoading && <Loading />} */}
-          <main>
-            <div className="mx-auto py-6 sm:px-6 lg:px-8 ">
-              <>
-                <UsersRender
-                  data={data.content}
-                  refreshMainList={refreshMainList}
-                  setData={setData}
-                  searchKey={searchKey}
-                  setSearchKey={setSearchKey}
-                  makeSearch={makeSearch}
-                  setMakeSearch={setMakeSearch}
-                  setPageNum={setPageNum}
-                />
-                {/* <DataPageOption
-                    data={data.content}
-                    refreshMainList={refreshMainList}
-                  /> */}
-              </>
+  return (
+    <>
+      <div>
+        {/* {isLoading && <Loading />} */}
+        <main>
+          <div className="mx-auto py-6 sm:px-6 lg:px-8 ">
+            <UsersRender
+              data={data}
+              refreshMainList={refreshMainList}
+              setData={setData}
+              searchKey={searchKey}
+              setSearchKey={setSearchKey}
+              makeSearch={makeSearch}
+              setMakeSearch={setMakeSearch}
+              setPageNum={setPageNum}
+            />
 
+            {data && (
               <Pagination
                 data={data}
                 refreshMainList={refreshMainList}
                 setPageNum={setPageNum}
                 pageNum={pageNum}
               />
-            </div>
-          </main>
-        </div>
-      </>
-    );
+            )}
+          </div>
+        </main>
+      </div>
+    </>
+  );
 }

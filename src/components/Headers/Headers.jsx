@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { useReducer, Fragment } from 'react';
-import { Link } from 'react-router-dom';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Menu, Transition } from '@headlessui/react';
 import UserProfile from '../../components/UserProfile/UserProfile';
 import useToken from '../../auth/useToken';
 import useUser from '../../auth/useUser';
 
 const Headers = ({ current }) => {
+  const navigator = useNavigate();
   const [token] = useToken();
   const user = useUser();
   const [userProfile, showUser] = useReducer(function (a) {
@@ -17,8 +17,18 @@ const Headers = ({ current }) => {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRp_3YqeetRoOdPsnESJq-J6MuPOrYpmZqxig&usqp=CAU';
 
   const navigation = [
-    { name: 'Dashboard', href: '/dataPage', current: current == 'Dashboard' },
-    { name: 'Users', href: '/users', current: current == 'Users' },
+    {
+      name: 'Dashboard',
+      href: '/dataPage',
+      current: current === 'Dashboard',
+      display: true,
+    },
+    {
+      name: 'Users',
+      href: '/users',
+      current: current === 'Users',
+      display: user ? user.realm_access.roles.includes('ROLE_ADMIN') : false,
+    },
   ];
   const userNavigation = [
     { name: 'Your Profile', href: '#', onclick: () => showUser() },
@@ -48,6 +58,9 @@ const Headers = ({ current }) => {
       onclick: () => {
         localStorage.removeItem('ipoteka_token');
         localStorage.removeItem('ipoteka_refresh_token');
+        navigator('/');
+        console.log('Sign out');
+        window.location.reload();
       },
     },
   ];
@@ -62,30 +75,35 @@ const Headers = ({ current }) => {
       <div className="mx-auto px-4 sm:px-6 lg:px-8 dashboar__head shadow pb-5">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <img
-                className="h-80 object-contain rounded-md"
-                src={process.env.PUBLIC_URL + './images/ipotekabank-logo.png'}
-                alt="Your Company"
-              />
+            <div className="flex-shrink-0 cursor-pointer">
+              <Link to="/dataPage">
+                <img
+                  className="h-80 object-contain rounded-md"
+                  src={process.env.PUBLIC_URL + './images/ipotekabank-logo.png'}
+                  alt="Ipoteka bank Logo"
+                />
+              </Link>
             </div>
             <div className="hidden md:block">
               <div className="ml-8 flex items-baseline space-x-4">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={classNames(
-                      item.current
-                        ? 'bg-white text-black border-b-2 border-indigo-500 inline-block'
-                        : 'text-gray-300   hover:text-black',
-                      'px-3 py-2 text-lg font-medium h-[6.7rem] flex items-center '
-                    )}
-                    aria-current={item.current ? 'page' : undefined}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navigation.map((item) => {
+                  console.log(item);
+                  return (
+                    <div style={{ display: item.display ? 'block' : 'none' }}>
+                      <NavLink
+                        key={item.name}
+                        to={item.href}
+                        className={({ isActive }) =>
+                          isActive
+                            ? 'bg-white text-black border-b-2 border-indigo-500  px-3 py-2 text-lg font-medium h-[6.7rem] flex items-center '
+                            : 'text-gray-300 hover:text-black px-3 py-2 text-lg font-medium h-[6.7rem] flex items-center '
+                        }
+                      >
+                        {item.name}
+                      </NavLink>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -108,7 +126,7 @@ const Headers = ({ current }) => {
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={user.imageUrl ? user.imageUrl : imageUrl}
+                      src={imageUrl}
                       alt=""
                     />
                   </Menu.Button>

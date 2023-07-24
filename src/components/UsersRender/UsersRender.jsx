@@ -23,7 +23,7 @@ export default function UsersRender({
   const [isLoading, setLoading] = useState(false);
   const [addNewUser, showUserAdd] = useReducer((modal) => !modal, false);
 
-  if (data)
+  if (userInfo)
     return (
       <div className="flex flex-col max-w-[80%] m-auto">
         {/* {isLoading && <Loading />} */}
@@ -171,15 +171,17 @@ export default function UsersRender({
                     <th></th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200">
                   {console.log(data)}
-                  {data.map((row) => (
-                    <UsersTable
-                      key={row.id}
-                      data={row}
-                      refreshMainList={refreshMainList}
-                    />
-                  ))}
+                  {data &&
+                    data.content.map((row) => (
+                      <UsersTable
+                        key={row.id}
+                        data={row}
+                        refreshMainList={refreshMainList}
+                      />
+                    ))}
                 </tbody>
               </table>
             </div>

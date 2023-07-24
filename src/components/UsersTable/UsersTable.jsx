@@ -64,20 +64,25 @@ const UsersTable = ({ data, refreshMainList }) => {
               className="text-red-500 hover:text-red-700 cursor-pointer"
               href="#"
               onClick={async () => {
-                setIsLoading(true);
-                try {
-                  const response = await axios.delete(
-                    process.env.REACT_APP_PROXY2 +
-                      '/api/admin/delete-user/' +
-                      data.id,
-                    {
-                      headers: { Authorization: `Bearer ${token}` },
-                    }
-                  );
-                  refreshMainList();
-                  setIsLoading(false);
-                } catch (e) {
-                  setIsLoading(false);
+                const permit = window.confirm(
+                  'Do you want to delete user: ' + data.firstName
+                );
+                if (permit) {
+                  setIsLoading(true);
+                  try {
+                    const response = await axios.delete(
+                      process.env.REACT_APP_PROXY2 +
+                        '/api/admin/delete-user/' +
+                        data.id,
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      }
+                    );
+                    refreshMainList();
+                    setIsLoading(false);
+                  } catch (e) {
+                    setIsLoading(false);
+                  }
                 }
               }}
               disabled={data.deleted}

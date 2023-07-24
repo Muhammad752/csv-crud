@@ -146,13 +146,18 @@ const Loan = ({ data, value, setRefresh }) => {
           <button
             className="mt-2 bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
             onClick={async () => {
-              const res = await axios.delete(
-                process.env.REACT_APP_PROXY + '/loans/' + value.id,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
+              let permit = window.confirm(
+                'Do you want to delete Loan with invoice: ' + value.invoice
               );
-              if (res) setRefresh();
+              if (permit) {
+                const res = await axios.delete(
+                  process.env.REACT_APP_PROXY + '/loans/' + value.id,
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                  }
+                );
+                if (res) setRefresh();
+              }
             }}
           >
             Delete
