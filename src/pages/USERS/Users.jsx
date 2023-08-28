@@ -47,7 +47,7 @@ export default function Users() {
             headers: { Authorization: `Bearer ${token}` },
             params: {
               page: pageNum,
-              size: 10,
+              size: 15,
               search: makeSearch.searchData,
             },
           }

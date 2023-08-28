@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import useToken from "./useToken";
+import { useState, useEffect } from 'react';
+import useToken from './useToken';
 
 const useUser = () => {
   const [token] = useToken();
 
   const getPayload = (token) => {
-    const encodedPayload = token.split(".")[1];
+    const encodedPayload = token.split('.')[1];
     return JSON.parse(atob(encodedPayload));
   };
 
@@ -21,9 +21,9 @@ const useUser = () => {
       setUser(getPayload(token));
     }
   }, [token]);
-if(user)
-  return user;
-  console.log("Not connected");
+
+  if (user) return user;
+  console.log('Not connected');
 };
 
 export default useUser;
